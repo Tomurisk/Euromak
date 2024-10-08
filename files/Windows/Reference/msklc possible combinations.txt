@@ -1,0 +1,15 @@
+Base
+
+Shift
+Caps lock
+Caps lock + Shift
+
+Ctrl
+Ctrl + Shift
+Ctrl + Caps lock
+Ctrl + Shift + Caps lock
+
+AltGr
+AltGr + Shift
+AltGr + Caps lock
+AltGr + Shift + Caps lock

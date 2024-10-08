@@ -1,0 +1,19 @@
+﻿# Include the original Compose file to add all the assignments
+include "/usr/share/X11/locale/en_US.UTF-8/Compose"
+
+<4> <r> : "ă"
+<4> <e> : "â"
+<4> <n> : "î"
+<4> <t> : "ș"
+<4> <i> : "ț"
+
+<4> <R> : "Ă"
+<4> <E> : "Â"
+<4> <N> : "Î"
+<4> <T> : "Ș"
+<4> <I> : "Ț"
+
+<4> <y> : "–"
+<4> <Y> : "–"
+
+<4> : ""
