@@ -34,7 +34,7 @@ is already on it.
 # Installation (Windows)
 
 If you would like to try out the layout without committing to a full installation, you can download the ~~"qwerty_euromak_*your language code*.exe" 
-(e.g. qwerty_euromak_lt.exe) from the Releases section *TODO: Right now, this option is not available. Download required files from **files > Windows** and compile AutoHotkey files with **U64 Unicode 64-bin.bin** base file.* This version of the layout is designed to work on US, UK or other English-based keyboard variants,
+(e.g. qwerty_euromak_lt.exe) from the Releases section~~ *TODO: Right now, this option is not available. Download required files from **files > Windows** and compile AutoHotkey files with **U64 Unicode 64-bin.bin** base file.* This version of the layout is designed to work on US, UK or other English-based keyboard variants,
 with the Colemak-DH base keys remapped to the corresponding QWERTY keys.
 
 For the best experience, it is recommended to install the base Colemak-DH layout and remove any other keyboard layouts. To do this, simply run the "cm_dh_us_amd64.msi"
