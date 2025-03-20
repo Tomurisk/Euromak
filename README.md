@@ -31,7 +31,7 @@ The dead key combinations are organized based on bigrams, ensuring the most like
 For example t is most likely to be typed after š (like the word "pirštas"), therefore 4 + t outputs š. No need to switch to another key afterwards – the finger
 is already on it.
 
-# Installation
+# Installation (Windows)
 
 If you would like to try out the layout without committing to a full installation, you can download the "qwerty_euromak_*your language code*.exe" 
 (e.g. qwerty_euromak_lt.exe) from the Releases section. This version of the layout is designed to work on US, UK or other English-based keyboard variants,
@@ -65,6 +65,17 @@ Program/script: **find the executable of Euromak**
 Press OK, and OK once again for the final time
 
 Done!
+
+# Installation (Linux, X11 only, limited support)
+
+### Works correctly in the following distros
+* Fedora LXDE Spin
+* Kubuntu
+* EndeavourOS
+
+Should work well on most LXDE and KDE distros, however untested. XFCE distros seemed to fail.
+
+Clone (or download as ZIP) this repository, go to **files > Linux > Endorsed edition** and run **setup.sh**. It is recommended to double-check the script, to be aware of any potential issues that may arise during installation.
 
 # Work in progress
 Right now there are not many layouts to offer. Currently Lithuanian and Romanian layouts are available, as well as a version, which combines both and makes them
