@@ -88,28 +88,28 @@ EndSection
 EOF
 echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten."
 
-# Add to autostart for major desktop environments
+# Add to autostart for major desktop environments (for some reason broken, just run manually from desktop)
 
-# GNOME and KDE Plasma (XDG autostart)
-AUTOSTART_DIR=~/.config/autostart
-mkdir -p "$AUTOSTART_DIR"
-AUTOSTART_FILE="$AUTOSTART_DIR/euromak.desktop"
-if [ ! -f "$AUTOSTART_FILE" ]; then
-    cat > "$AUTOSTART_FILE" <<EOF
-[Desktop Entry]
-Type=Application
-Exec=$HOME/.euromak/ahk_x11.AppImage $HOME/.euromak/euromak.ahk
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name=Euromak
-Comment=Autostart AHK X11 with Euromak
-EOF
-    chmod +x "$AUTOSTART_FILE"
-    echo "Autostart entry created and made executable for GNOME/KDE."
-else
-    echo "Autostart entry already exists for GNOME/KDE. Skipping."
-fi
+#GNOME and KDE Plasma (XDG autostart)
+#AUTOSTART_DIR=~/.config/autostart
+#mkdir -p "$AUTOSTART_DIR"
+#AUTOSTART_FILE="$AUTOSTART_DIR/euromak.desktop"
+#if [ ! -f "$AUTOSTART_FILE" ]; then
+#    cat > "$AUTOSTART_FILE" <<EOF
+#[Desktop Entry]
+#Type=Application
+#Exec=$HOME/.euromak/ahk_x11.AppImage $HOME/.euromak/euromak.ahk
+#Hidden=false
+#NoDisplay=false
+#X-GNOME-Autostart-enabled=true
+#Name=Euromak
+#Comment=Autostart AHK X11 with Euromak
+#EOF
+#    chmod +x "$AUTOSTART_FILE"
+#    echo "Autostart entry created and made executable for GNOME/KDE."
+#else
+#    echo "Autostart entry already exists for GNOME/KDE. Skipping."
+#fi
 
 # Add shortcut to Desktop
 DESKTOP_DIR=~/Desktop
