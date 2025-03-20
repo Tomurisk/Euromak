@@ -132,4 +132,18 @@ else
     echo "Desktop shortcut already exists. Skipping."
 fi
 
+# Check if running on Fedora and if fuse-libs is installed
+if [ -f /etc/fedora-release ]; then
+    echo "Detected Fedora distribution."
+    if ! rpm -q fuse-libs &> /dev/null; then
+        echo "fuse-libs is not installed. Installing now..."
+        sudo dnf install fuse-libs -y
+        echo "fuse-libs installed."
+    else
+        echo "fuse-libs is already installed. Skipping installation."
+    fi
+else
+    echo "Not running on Fedora. Skipping fuse-libs check."
+fi
+
 echo "Setup complete!"
