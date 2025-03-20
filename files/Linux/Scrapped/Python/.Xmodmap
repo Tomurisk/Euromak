@@ -1,0 +1,7 @@
+keycode 66 = F20
+clear lock
+clear mod3
+add mod3 = F20
+keysym Return = Return dollar
+keycode 67 = Caps_Lock
+keycode 13 = 4

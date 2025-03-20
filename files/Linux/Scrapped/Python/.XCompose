@@ -1,0 +1,5 @@
+# Include the original Compose file to add all the assignments
+include "/usr/share/X11/locale/en_US.UTF-8/Compose"
+
+<4> <y> : "–"
+<4> <Y> : "–"
