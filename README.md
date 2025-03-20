@@ -71,7 +71,7 @@ Done!
 ### Works correctly in the following distros (as of 2025-03-20)
 * Fedora LXDE Spin
 * Kubuntu
-* EndeavourOS
+* EndeavourOS (KDE)
 
 Should work well on most LXDE and KDE distros, however untested. XFCE distros seemed to fail.
 

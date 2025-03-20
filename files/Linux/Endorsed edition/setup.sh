@@ -146,4 +146,18 @@ else
     echo "Not running on Fedora. Skipping fuse-libs check."
 fi
 
+# Check if running on Ubuntu and if libfuse2 is installed
+if [ -f /etc/lsb-release ] && grep -q "Ubuntu" /etc/lsb-release; then
+    echo "Detected Ubuntu distribution."
+    if ! dpkg -l | grep -q libfuse2; then
+        echo "libfuse2 is not installed. Installing now..."
+        sudo apt-get update && sudo apt-get install libfuse2 -y
+        echo "libfuse2 installed."
+    else
+        echo "libfuse2 is already installed. Skipping installation."
+    fi
+else
+    echo "Not running on Ubuntu. Skipping libfuse2 check."
+fi
+
 echo "Setup complete!"
