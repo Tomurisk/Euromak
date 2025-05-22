@@ -1,0 +1,5 @@
+"xdg-open ~/.ctrl_w.ahk"
+    c:193
+
+"flatpak run it.mijorus.smile"
+    m:0x50 + c:60

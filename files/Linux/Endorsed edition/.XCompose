@@ -1,6 +1,3 @@
-# Include the original Compose file to add all the assignments
-include "/usr/share/X11/locale/en_US.UTF-8/Compose"
-
 <4> <i> : "č"
 <4> <t> : "š"
 <4> <e> : "ž"
@@ -24,8 +21,8 @@ include "/usr/share/X11/locale/en_US.UTF-8/Compose"
 <4> <y> : "–"
 <4> <Y> : "–"
 
-<4> <l> : "„"
-<4> <u> : "“"
+<4> <9> : "„"
+<4> <0> : "“"
 
 <4> : ""
 
@@ -44,8 +41,8 @@ include "/usr/share/X11/locale/en_US.UTF-8/Compose"
 <5> <y> : "–"
 <5> <Y> : "–"
 
-<5> <l> : "„"
-<5> <u> : "”"
+<5> <9> : "„"
+<5> <0> : "”"
 
 <5> <k> : "«"
 <5> <h> : "»"

@@ -1,18 +1,8 @@
-ro = false
+Run, xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90
 
 5::Numpad5
-F2::Send, +{Enter}
 
 F20::
-if ro = true
-    ro = false
-else
-    ro = true
-return
-
-4::
-if ro = false
-    Send, 4
-else
-    Send, 5
+    Run, xdg-open Desktop/euromak2.ahk
+    ExitApp
 return

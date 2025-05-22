@@ -7,5 +7,7 @@ keycode 67 = Caps_Lock
 clear Lock
 add Lock = Caps_Lock
 
-keysym Return = Return dollar
 keysym dollar = 4 KP_4
+
+keycode 84 = percent KP_5 
+keycode 90 = dollar KP_0
