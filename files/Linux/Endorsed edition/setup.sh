@@ -74,8 +74,23 @@ if [ ! -d /etc/X11/xorg.conf.d ]; then
     echo "Directory /etc/X11/xorg.conf.d created."
 fi
 
-# Overwrite 00-keyboard.conf
-sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
+# Prompt the user to add the Kazakh layout
+read -p "Add Kazakh layout? (y/n): " add_kazakh
+
+if [[ "$add_kazakh" == "y" ]]; then
+    # Overwrite 00-keyboard.conf with both layouts
+    sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
+Section "InputClass"
+    Identifier "keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "us(colemak_dh_ortho),kz(basic)"
+    Option "XkbOptions" "grp:alt_shift_toggle"
+EndSection
+EOF
+    echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten with both layouts."
+else
+    # Overwrite 00-keyboard.conf with only the Colemak layout
+    sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
 Section "InputClass"
     Identifier "keyboard"
     MatchIsKeyboard "on"
@@ -83,7 +98,8 @@ Section "InputClass"
     Option "XkbVariant" "colemak_dh_ortho"
 EndSection
 EOF
-echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten."
+    echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten with Colemak layout only."
+fi
 
 # Check if running on Fedora and if fuse-libs, xdotool, and xbindkeys are installed
 if [ -f /etc/fedora-release ]; then
