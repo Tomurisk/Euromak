@@ -41,7 +41,6 @@ sudo tee /etc/vconsole.conf > /dev/null <<EOL
 KEYMAP=mod-dh-matrix-us
 FONT=eurlatgr
 XKBLAYOUT=us-colemak_dh_ortho
-XKBMODEL=pc105
 EOL
 
 # Print a message indicating success
