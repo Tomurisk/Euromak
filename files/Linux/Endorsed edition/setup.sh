@@ -38,7 +38,7 @@ done
 
 # Overwrite the vconsole.conf file with the specified configurations
 sudo tee /etc/vconsole.conf > /dev/null <<EOL
-XKBLAYOUT=us-colemak_dh_ortho
+KEYMAP=us-colemak_dh_ortho
 FONT=eurlatgr
 EOL
 
