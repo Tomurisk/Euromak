@@ -36,59 +36,16 @@ for file in "${desktop_files[@]}"; do
     fi
 done
 
-# Download and extract keymap if it doesn't already exist
-if [ ! -f mod-dh-matrix-us.map.gz ]; then
-    wget https://www.kernel.org/pub/linux/utils/kbd/kbd-2.7.1.tar.gz
-    tar --strip-components=5 -xvzf kbd-2.7.1.tar.gz kbd-2.7.1/data/keymaps/i386/colemak/mod-dh-matrix-us.map
-    gzip mod-dh-matrix-us.map
-    echo "Keymap mod-dh-matrix-us.map downloaded and compressed."
-else
-    echo "Keymap mod-dh-matrix-us.map.gz already exists. Skipping."
-fi
+# Overwrite the vconsole.conf file with the specified configurations
+sudo tee /etc/vconsole.conf > /dev/null <<EOL
+KEYMAP=mod-dh-matrix-us
+FONT=eurlatgr
+XKBLAYOUT=us-colemak_dh_ortho
+XKBMODEL=pc105
+EOL
 
-# Create directory for keymaps if it doesn't exist
-if [ ! -d /usr/share/kbd/keymaps/i386/colemak ]; then
-    sudo mkdir -p /usr/share/kbd/keymaps/i386/colemak
-    echo "Directory /usr/share/kbd/keymaps/i386/colemak created."
-fi
-
-# Copy keymap file if it doesn't already exist
-if [ ! -f /usr/share/kbd/keymaps/i386/colemak/mod-dh-matrix-us.map.gz ]; then
-    sudo cp mod-dh-matrix-us.map.gz /usr/share/kbd/keymaps/i386/colemak
-    echo "Keymap mod-dh-matrix-us.map.gz copied to /usr/share/kbd/keymaps/i386/colemak."
-else
-    echo "Keymap mod-dh-matrix-us.map.gz already exists in /usr/share/kbd/keymaps/i386/colemak. Skipping."
-fi
-
-# Extract "include" directory
-if [ ! -d include ]; then
-    tar --strip-components=4 -xvzf kbd-2.7.1.tar.gz kbd-2.7.1/data/keymaps/i386/include
-    echo "Extracted 'include' directory."
-else
-    echo "'include' directory already exists. Skipping extraction."
-fi
-
-# Only create the system include directory if it doesn't exist
-if [ ! -d /usr/share/kbd/keymaps/i386/include ]; then
-    sudo mkdir -p /usr/share/kbd/keymaps/i386/include
-    echo "Created system include directory."
-fi
-
-# Copy missing files to system include directory
-for file in include/*; do
-    if [ ! -f "/usr/share/kbd/keymaps/i386/include/$(basename $file)" ]; then
-        sudo cp "$file" /usr/share/kbd/keymaps/i386/include/
-        echo "Copied missing file: $(basename $file)"
-    else
-        echo "File $(basename $file) already exists."
-    fi
-done
-
-# Create directory for X11 config if it doesn't exist
-if [ ! -d /etc/X11/xorg.conf.d ]; then
-    sudo mkdir -p /etc/X11/xorg.conf.d
-    echo "Directory /etc/X11/xorg.conf.d created."
-fi
+# Print a message indicating success
+echo "Configuration written to /etc/vconsole.conf"
 
 # Prompt the user to add the Kazakh layout
 read -p "Add Kazakh layout? (y/n): " add_kazakh
