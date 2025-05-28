@@ -66,10 +66,12 @@ Press OK, and OK once again for the final time
 
 Done!
 
-# Installation (Linux, X11 only, limited support)
-
-### Works correctly in the following distros (as of 2025-03-20)
+# Installation (Linux, X11 only)
+### Works excellent, somewhat similar to Windows support (as of 2025-05-28)
 * Fedora LXDE Spin
+
+### Had also worked correctly on the following distros (as of 2025-03-20)
+You will need to backtrack to a commit of the date mentioned. It is unlikely that the version as it is now would still work, as I have introduced changes that likely break support for those distros.
 * Kubuntu
 * EndeavourOS
 
