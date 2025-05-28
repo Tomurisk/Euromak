@@ -47,23 +47,47 @@ else
 fi
 
 # Create directory for keymaps if it doesn't exist
-if [ ! -d /usr/share/kbd/keymaps/i386/ ]; then
-    sudo mkdir -p /usr/share/kbd/keymaps/i386/
-    echo "Directory /usr/share/kbd/keymaps/i386/ created."
+if [ ! -d /usr/share/kbd/keymaps/i386/colemak ]; then
+    sudo mkdir -p /usr/share/kbd/keymaps/i386/colemak
+    echo "Directory /usr/share/kbd/keymaps/i386/colemak created."
 fi
 
 # Copy keymap file if it doesn't already exist
-if [ ! -f /usr/share/kbd/keymaps/i386/mod-dh-matrix-us.map.gz ]; then
-    sudo cp mod-dh-matrix-us.map.gz /usr/share/kbd/keymaps/i386/
-    echo "Keymap mod-dh-matrix-us.map.gz copied to /usr/share/kbd/keymaps/i386/."
+if [ ! -f /usr/share/kbd/keymaps/i386/colemak/mod-dh-matrix-us.map.gz ]; then
+    sudo cp mod-dh-matrix-us.map.gz /usr/share/kbd/keymaps/i386/colemak
+    echo "Keymap mod-dh-matrix-us.map.gz copied to /usr/share/kbd/keymaps/i386/colemak."
 else
-    echo "Keymap mod-dh-matrix-us.map.gz already exists in /usr/share/kbd/keymaps/i386/. Skipping."
+    echo "Keymap mod-dh-matrix-us.map.gz already exists in /usr/share/kbd/keymaps/i386/colemak. Skipping."
 fi
+
+# Extract "include" directory
+if [ ! -d include ]; then
+    tar --strip-components=4 -xvzf kbd-2.7.1.tar.gz kbd-2.7.1/data/keymaps/i386/include
+    echo "Extracted 'include' directory."
+else
+    echo "'include' directory already exists. Skipping extraction."
+fi
+
+# Only create the system include directory if it doesn't exist
+if [ ! -d /usr/share/kbd/keymaps/i386/include ]; then
+    sudo mkdir -p /usr/share/kbd/keymaps/i386/include
+    echo "Created system include directory."
+fi
+
+# Copy missing files to system include directory
+for file in include/*; do
+    if [ ! -f "/usr/share/kbd/keymaps/i386/include/$(basename $file)" ]; then
+        sudo cp "$file" /usr/share/kbd/keymaps/i386/include/
+        echo "Copied missing file: $(basename $file)"
+    else
+        echo "File $(basename $file) already exists."
+    fi
+done
 
 # Create or overwrite /etc/rc.local
 sudo tee /etc/rc.local > /dev/null <<EOF
 #!/bin/bash
-loadkeys /usr/share/kbd/keymaps/i386/mod-dh-matrix-us
+loadkeys /usr/share/kbd/keymaps/i386/colemak/mod-dh-matrix-us
 exit 0
 EOF
 echo "/etc/rc.local updated."
@@ -74,23 +98,8 @@ if [ ! -d /etc/X11/xorg.conf.d ]; then
     echo "Directory /etc/X11/xorg.conf.d created."
 fi
 
-# Prompt the user to add the Kazakh layout
-read -p "Add Kazakh layout? (y/n): " add_kazakh
-
-if [[ "$add_kazakh" == "y" ]]; then
-    # Overwrite 00-keyboard.conf with both layouts
-    sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
-Section "InputClass"
-    Identifier "keyboard"
-    MatchIsKeyboard "on"
-    Option "XkbLayout" "us(colemak_dh_ortho),kz(basic)"
-    Option "XkbOptions" "grp:alt_shift_toggle"
-EndSection
-EOF
-    echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten with both layouts."
-else
-    # Overwrite 00-keyboard.conf with only the Colemak layout
-    sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
+# Overwrite 00-keyboard.conf
+sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf > /dev/null <<EOF
 Section "InputClass"
     Identifier "keyboard"
     MatchIsKeyboard "on"
@@ -98,8 +107,7 @@ Section "InputClass"
     Option "XkbVariant" "colemak_dh_ortho"
 EndSection
 EOF
-    echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten with Colemak layout only."
-fi
+echo "/etc/X11/xorg.conf.d/00-keyboard.conf overwritten."
 
 # Check if running on Fedora and if fuse-libs, xdotool, and xbindkeys are installed
 if [ -f /etc/fedora-release ]; then
