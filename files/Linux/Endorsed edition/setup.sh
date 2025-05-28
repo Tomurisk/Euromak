@@ -38,13 +38,12 @@ done
 
 # Overwrite the vconsole.conf file with the specified configurations
 sudo tee /etc/vconsole.conf > /dev/null <<EOL
-KEYMAP=mod-dh-matrix-us
-FONT=eurlatgr
 XKBLAYOUT=us-colemak_dh_ortho
+FONT=eurlatgr
 EOL
 
 # Print a message indicating success
-echo "Configuration written to /etc/vconsole.conf"
+echo "Configuration overwritten at /etc/vconsole.conf"
 
 # Prompt the user to add the Kazakh layout
 read -p "Add Kazakh layout? (y/n): " add_kazakh
