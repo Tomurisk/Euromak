@@ -9,5 +9,5 @@ add Lock = Caps_Lock
 
 keysym dollar = 4 KP_4
 
-keycode 84 = percent KP_5 
+keycode 86 = KP_Add percent
 keycode 90 = dollar KP_0
