@@ -9,5 +9,7 @@ add Lock = Caps_Lock
 
 keysym dollar = 4 KP_4
 
+clear shift
 keycode 62 = percent
 keycode 22 = BackSpace dollar
+keycode 90 = dollar KP_0
