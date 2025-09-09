@@ -1,0 +1,10 @@
+# Apply CRLF line endings to all text files in files/Windows
+files/Windows/* text eol=crlf
+
+# Treat binary files properly (no line ending conversion)
+files/Windows/*.png binary
+files/Windows/*.jpg binary
+files/Windows/*.jpeg binary
+files/Windows/*.gif binary
+files/Windows/*.bmp binary
+files/Windows/*.ico binary
