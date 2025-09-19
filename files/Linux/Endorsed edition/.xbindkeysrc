@@ -1,2 +1,2 @@
-"xdg-open ~/.ctrl_w.ahk"
+"sleep 0.2; xdotool key ctrl+w"
     c:193

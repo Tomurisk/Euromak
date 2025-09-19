@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define an array of files to check and download
-files=(.XCompose .Xmodmap .ctrl_w.ahk .xbindkeysrc ahk_x11.AppImage)
+files=(.XCompose .Xmodmap .xbindkeysrc ahk_x11.AppImage)
 
 # Check if each file already exists before copying or downloading
 for file in "${files[@]}"; do
