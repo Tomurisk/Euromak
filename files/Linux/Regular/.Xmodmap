@@ -1,0 +1,5 @@
+keysym dollar = 4 KP_4
+
+clear shift
+keycode 62 = dollar
+keycode 90 = percent KP_0
