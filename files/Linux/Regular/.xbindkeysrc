@@ -1,2 +1,5 @@
 "sleep 0.2; xdotool key ctrl+w"
     c:193
+
+"xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90; xmodmap ~/.Xmodmap"
+    m:0x54 + c:67
