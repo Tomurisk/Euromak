@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Define an array of files to check and download
 files=(.XCompose .Xmodmap .xbindkeysrc ahk_x11.AppImage)
 

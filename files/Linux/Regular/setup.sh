@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Define an array of files to check and download
 files=(.Xmodmap .xbindkeysrc)
 
