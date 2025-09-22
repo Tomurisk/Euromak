@@ -40,6 +40,14 @@ else
     echo ".XCompose already exists. Skipping keymap setup."
 fi
 
+if [ ! -f ~/.indevs.sh ]; then
+    cp .indevs.sh ~/
+    chmod +x ~/.indevs.sh
+    echo ".indevs.sh copied to home."
+else
+    echo ".indevs.sh already exists. Skipping."
+fi
+
 # Overwrite the vconsole.conf file with the specified configurations
 sudo tee /etc/vconsole.conf > /dev/null <<EOL
 KEYMAP=us-colemak_dh_ortho
