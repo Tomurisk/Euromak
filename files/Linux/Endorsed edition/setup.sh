@@ -2,6 +2,9 @@
 
 set -e
 
+# Switch to script's directory
+cd "$(dirname "$0")"
+
 # Define an array of files to check and download
 files=(.XCompose .Xmodmap .xbindkeysrc ahk_x11.AppImage)
 
