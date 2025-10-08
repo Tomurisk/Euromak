@@ -12,7 +12,7 @@ files=(.XCompose .Xmodmap .xbindkeysrc ahk_x11.AppImage)
 for file in "${files[@]}"; do
     if [ "$file" == "ahk_x11.AppImage" ]; then
         if [ ! -f ~/"$file" ]; then
-            wget -P ~ https://github.com/phil294/AHK_X11/releases/download/1.0.5/ahk_x11.AppImage
+            wget --quiet -P ~ https://github.com/phil294/AHK_X11/releases/download/1.0.5/ahk_x11.AppImage
             chmod +x ~/ahk_x11.AppImage
             echo "$file downloaded and made executable. Please open it and install via the GUI."
         else
@@ -28,16 +28,43 @@ for file in "${files[@]}"; do
     fi
 done
 
-# Define an array of files to copy to ~/Desktop
+# Define original files
 desktop_files=(euromak.ahk euromak2.ahk)
 
-# Copy each file to ~/Desktop if it doesn't already exist
+# Declare associative array to store new names
+declare -A new_names
+
+# Ask user for new names (blank to keep original)
 for file in "${desktop_files[@]}"; do
-    if [ ! -f ~/Desktop/"$file" ]; then
-        cp "$file" ~/Desktop/
-        echo "$file copied to ~/Desktop."
+    echo "Enter new name for '$file' (without extension, blank = original): " 
+    read -p "" new_name
+    if [ -z "$new_name" ]; then
+        new_names["$file"]="$file"
     else
-        echo "$file already exists in ~/Desktop. Skipping."
+        new_names["$file"]="${new_name}.ahk"
+    fi
+done
+
+# Copy and replace references
+for file in "${desktop_files[@]}"; do
+    src="$file"
+    dest="${new_names[$file]}"
+    dest_path=~/Desktop/"$dest"
+
+    if [ ! -f "$dest_path" ]; then
+        # Read content and replace references to other files
+        content=$(<"$src")
+        for other_file in "${desktop_files[@]}"; do
+            if [ "$other_file" != "$file" ]; then
+                content="${content//$other_file/${new_names[$other_file]}}"
+            fi
+        done
+
+        # Write modified content to destination
+        echo "$content" > "$dest_path"
+        echo "$src copied to ~/Desktop as $dest with references updated."
+    else
+        echo "$dest already exists in ~/Desktop. Skipping."
     fi
 done
 
