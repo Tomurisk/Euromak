@@ -2,6 +2,9 @@
 
 set -e
 
+# Harden wget by default
+alias wget='wget --https-only --secure-protocol=TLSv1_2'
+
 # Switch to script's directory
 cd "$(dirname "$0")"
 
