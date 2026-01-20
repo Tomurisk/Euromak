@@ -4,6 +4,8 @@ Run, xmodmap ~/.Xmodmap
 5::Numpad5
 
 F20::
-    Run, xdg-open Desktop/euromak2.ahk
+    Run, xdg-open Desktop/euromak.lahk
     ExitApp
 return
+
+4::Send, 5

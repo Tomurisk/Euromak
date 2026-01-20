@@ -1,0 +1,2 @@
+Run after ahk_x11.AppImage had been installed
+sed -i 's/\*\.ahk/\*\.lahk/g' ~/.local/share/mime/packages/ahk_x11-mime.xml && update-mime-database ~/.local/share/mime

@@ -32,7 +32,7 @@ for file in "${files[@]}"; do
 done
 
 # Define original files
-desktop_files=(euromak.ahk euromak2.ahk)
+desktop_files=(euromak.lahk euromak2.lahk)
 
 # Declare associative array to store new names
 declare -A new_names
@@ -44,7 +44,7 @@ for file in "${desktop_files[@]}"; do
     if [ -z "$new_name" ]; then
         new_names["$file"]="$file"
     else
-        new_names["$file"]="${new_name}.ahk"
+        new_names["$file"]="${new_name}.lahk"
     fi
 done
 
