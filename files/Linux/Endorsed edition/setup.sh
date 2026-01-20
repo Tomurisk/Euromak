@@ -63,6 +63,9 @@ for file in "${desktop_files[@]}"; do
             fi
         done
 
+        # Replace literal "REAL_USER" with the current username
+        content="${content//REAL_USER/$USER}"
+
         # Write modified content to destination
         echo "$content" > "$dest_path"
         echo "$src copied to ~/Desktop as $dest with references updated."
