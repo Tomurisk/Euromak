@@ -66,18 +66,26 @@ Press OK, and OK once again for the final time
 
 Done!
 
-# Installation (Linux, X11 only)
-### Works excellent, somewhat similar to Windows support (as of 2025-05-28)
+# Installation (BSD/Linux, X11 only)
+### Works excellent, somewhat similar to Windows support (as of 2026-01-26)
 * Fedora LXDE Spin
+* Linux Mint Xfce (and KDE from the repository)
+* Void Linux Cinnamon, MATE
+* FreeBSD Xfce
+* OpenIndiana MATE (works as-is, no `toggle-kz.sh` support)
 
-### Had also worked correctly on the following distros (as of 2025-03-20)
-You will need to backtrack to a commit of the date mentioned. It is unlikely that the version as it is now would still work, as I have introduced changes that likely break support for those distros.
-* Kubuntu
-* EndeavourOS
+BSD variants need this change in the file:
+```bash
+sed -i '' -e 's|#!/bin/bash|#!/usr/local/bin/bash|' -e 's|/usr/share/X11/xkb/symbols/emk|/usr/local/share/X11/xkb/symbols/emk|' euromak_endorsed.sh
+```
 
-Should work well on most LXDE and KDE distros, however untested. XFCE distros seemed to fail.
+Probably could work on GNOME, but requires some additional tweaking, I don't use GNOME. Doesn't work with KDE upstream for some reason.
 
-Clone (or download as ZIP) this repository, go to **files > Linux > Endorsed edition** and run **setup.sh**. It is recommended to double-check the script, to be aware of any potential issues that may arise during installation.
+Other distros untested, but should work fine with a bit of tweaking, as long as it's X11.
+
+Go to **files > Linux** and download **euromak_endorsed.sh**, then run it. That *should* be it.
+
+[👉️ Or access it directly](https://github.com/Tomurisk/Euromak/raw/refs/heads/main/files/Linux/euromak_endorsed.sh)
 
 # Work in progress
 Right now there are not many layouts to offer. Currently Lithuanian and Romanian layouts are available, as well as a version, which combines both and makes them
