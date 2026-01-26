@@ -4,32 +4,29 @@ set -e
 
 echo "=== Writing Euromak definitions ==="
 
-LT_FILE="/usr/share/X11/xkb/symbols/lt"
-RO_FILE="/usr/share/X11/xkb/symbols/ro"
-
-# --- Append to lt if missing ---
-if ! grep -Fq 'xkb_symbols "lt"' "$LT_FILE"; then
-    printf "\n" | sudo tee -a "$LT_FILE" >/dev/null
-    sudo tee -a "$LT_FILE" >/dev/null <<'EOF'
-default partial alphanumeric_keys modifier_keys
-xkb_symbols "cmk" {
+sudo tee /usr/share/X11/xkb/symbols/emk >/dev/null << 'EOF'
+partial alphanumeric_keys modifier_keys
+xkb_symbols "lt" {
     include "us(colemak_dh_ortho)"
     key <AE04> { [ F15, 4 ] };
 };
-EOF
-fi
 
-# --- Append to ro if missing ---
-if ! grep -Fq 'xkb_symbols "cmk"' "$RO_FILE"; then
-    printf "\n" | sudo tee -a "$RO_FILE" >/dev/null
-    sudo tee -a "$RO_FILE" >/dev/null <<'EOF'
 partial alphanumeric_keys modifier_keys
-xkb_symbols "cmk" {
+xkb_symbols "ro" {
     include "us(colemak_dh_ortho)"
     key <AE04> { [ F16, 4 ] };
 };
+
+partial alphanumeric_keys modifier_keys
+xkb_symbols "kz" {
+    include "kz(basic)"
+    key <AE08> { [ Ukrainian_ie,              Ukrainian_IE,              8, asterisk ] };
+    key <AE09> { [ Ukrainian_yi,              Ukrainian_YI,              9, parenleft ] };
+    key <AE10> { [ Ukrainian_ghe_with_upturn, Ukrainian_GHE_WITH_UPTURN, 0, parenright ] };
+    key <AE11> { [ apostrophe,                emdash,                    minus, underscore ] };
+    key <AE12> { [ Cyrillic_io,               Cyrillic_IO,               equal, plus ] };
+};
 EOF
-fi
 
 echo "=== Writing ~/.XCompose ==="
 
@@ -97,7 +94,6 @@ tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
 EOF
 
 echo "=== Writing /etc/X11/xorg.conf.d/00-keyboard.conf ==="
-
 sudo mkdir -p /etc/X11/xorg.conf.d
 sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf >/dev/null << 'EOF'
 Section "InputClass"
@@ -118,39 +114,13 @@ tee "$HOME/.local/bin/toggle-kz.sh" >/dev/null << 'EOF'
 CURRENT=$(setxkbmap -query | awk '/layout/ {print $2}')
 
 # If already in kz, switch back to your normal layouts
-if [ "$CURRENT" = "kz(basic)" ]; then
-    setxkbmap -layout "lt(cmk),ro(cmk)"
+if [ "$CURRENT" = "emk(kz)" ]; then
+    setxkbmap -layout "emk(lt),emk(ro)"
 else
-    setxkbmap -layout "kz(basic)"
+    setxkbmap -layout "emk(kz)"
 fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-kz.sh"
-
-read -p "Replace Kazakh letters with Ukrainian letters? (y/n): " replace_letters
-
-if [[ "$replace_letters" == "y" ]]; then
-    # Define the file path and backup directory
-    FILE="/usr/share/X11/xkb/symbols/kz"
-    BACKUP_DIR="/usr/share/X11/xkb/symbols"
-
-    # Check if the backup file already exists
-    if [ ! -f "$BACKUP_DIR/kz.bak" ]; then
-        sudo cp "$FILE" "$BACKUP_DIR/kz.bak"
-        echo "Backup created at $BACKUP_DIR/kz.bak"
-    else
-        echo "Backup already exists at $BACKUP_DIR/kz.bak"
-    fi
-
-    # Replace lines 35-39 with the new content, including four escaped spaces before each line
-    sudo sed -i '35,39d' "$FILE"  # Delete lines 35-39
-    sudo sed -i '35i\    key <AE08> { [ Ukrainian_ie,              Ukrainian_IE ] };' "$FILE"
-    sudo sed -i '36i\    key <AE09> { [ Ukrainian_yi,              Ukrainian_YI ] };' "$FILE"
-    sudo sed -i '37i\    key <AE10> { [ Ukrainian_ghe_with_upturn, Ukrainian_GHE_WITH_UPTURN ] };' "$FILE"
-    sudo sed -i '38i\    key <AE11> { [ apostrophe,                emdash ] };' "$FILE"
-    sudo sed -i '39i\    key <AE12> { [ Cyrillic_io,               Cyrillic_IO ] };' "$FILE"
-
-    read -p "Kazakh letters have been replaced with Ukrainian letters."
-fi
 
 echo "=== Dollar sign ==="
 mkdir -p ~/.xkb/symbols
@@ -164,7 +134,7 @@ echo "=== Writing ~/.local/bin/startup.sh ==="
 tee "$HOME/.local/bin/startup.sh" >/dev/null << 'EOF'
 #!/bin/bash
 
-setxkbmap -layout "lt(cmk),ro(cmk)"
+setxkbmap -layout "emk(lt),emk(ro)"
 setxkbmap -print \
   | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \
   | xkbcomp -I$HOME/.xkb -xkm - :0
