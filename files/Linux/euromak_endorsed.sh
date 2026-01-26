@@ -3,7 +3,6 @@
 set -e
 
 echo "=== Writing Euromak definitions ==="
-
 sudo tee /usr/share/X11/xkb/symbols/emk >/dev/null << 'EOF'
 partial alphanumeric_keys modifier_keys
 xkb_symbols "lt" {
@@ -29,7 +28,6 @@ xkb_symbols "kz" {
 EOF
 
 echo "=== Writing ~/.XCompose ==="
-
 tee "$HOME/.XCompose" >/dev/null << 'EOF'
 <F15> <i> : "č"
 <F15> <t> : "š"
@@ -84,7 +82,6 @@ tee "$HOME/.XCompose" >/dev/null << 'EOF'
 EOF
 
 echo "=== Writing ~/.xbindkeysrc ==="
-
 tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
 "sleep 0.2; xdotool key ctrl+w"
     c:193
@@ -93,9 +90,21 @@ tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
     m:0x14 + c:49
 EOF
 
-echo "=== Writing /etc/X11/xorg.conf.d/00-keyboard.conf ==="
-sudo mkdir -p /etc/X11/xorg.conf.d
-sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf >/dev/null << 'EOF'
+echo "=== Setting up system base keyboard ==="
+# Detect Debian
+if grep -qi "debian" /etc/os-release; then
+    echo "Debian detected — using /etc/default/keyboard instead of Xorg config."
+    sudo tee /etc/default/keyboard >/dev/null << 'EOF'
+XKBMODEL="pc105"
+XKBLAYOUT="us"
+XKBVARIANT="colemak_dh_ortho"
+XKBOPTIONS="grp:alt_shift_toggle"
+BACKSPACE="guess"
+EOF
+else
+    echo "Non-Debian system detected — writing Xorg keyboard config."
+    sudo mkdir -p /etc/X11/xorg.conf.d
+    sudo tee /etc/X11/xorg.conf.d/00-keyboard.conf >/dev/null << 'EOF'
 Section "InputClass"
     Identifier "keyboard"
     MatchIsKeyboard "on"
@@ -104,6 +113,7 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 EOF
+fi
 
 echo "=== Writing ~/.local/bin/toggle-kz.sh ==="
 mkdir -p "$HOME/.local/bin"
@@ -144,6 +154,6 @@ EOF
 chmod +x "$HOME/.local/bin/startup.sh"
 
 echo "=== Done ==="
-echo "Add $HOME/.local/bin/startup.sh to autostart"
+echo -e "\e[91mAdd $HOME/.local/bin/startup.sh to autostart\e[0m"
 echo "Install xbindkeys and xdotool"
 read -p "Reboot or re-login for XKB changes to apply."
