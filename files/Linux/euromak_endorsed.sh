@@ -91,7 +91,7 @@ tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
 "sleep 0.2; xdotool key ctrl+w"
     c:193
 
-"~/.local/bin/toggle-kz.sh"
+"~/.local/bin/toggle-cyr.sh"
     m:0x14 + c:49
 EOF
 
@@ -120,22 +120,22 @@ EndSection
 EOF
 fi
 
-echo "=== Writing ~/.local/bin/toggle-kz.sh ==="
+echo "=== Writing ~/.local/bin/toggle-cyr.sh ==="
 mkdir -p "$HOME/.local/bin"
-tee "$HOME/.local/bin/toggle-kz.sh" >/dev/null << EOF
+tee "$HOME/.local/bin/toggle-cyr.sh" >/dev/null << EOF
 #!/bin/bash
 
 # Get current layout
 CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 
-# If already in kz, switch back to your normal layouts
+# If already in Cyrillic, switch back to your normal layouts
 if [ "\$CURRENT" = "$CYR" ]; then
     setxkbmap -layout "$LAYOUTS"
 else
     setxkbmap -layout "$CYR"
 fi
 EOF
-chmod +x "$HOME/.local/bin/toggle-kz.sh"
+chmod +x "$HOME/.local/bin/toggle-cyr.sh"
 
 echo "=== Dollar sign ==="
 mkdir -p ~/.xkb/symbols
