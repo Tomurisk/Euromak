@@ -151,8 +151,8 @@ tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 
 setxkbmap -layout "$LAYOUTS"
 sleep 0.5
-setxkbmap -print \
-  | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \
+setxkbmap -print \\
+  | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \\
   | xkbcomp -I\$HOME/.xkb -xkm - :0
 xbindkeys
 xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90
