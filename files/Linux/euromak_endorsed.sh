@@ -8,12 +8,14 @@ partial alphanumeric_keys modifier_keys
 xkb_symbols "lt" {
     include "us(colemak_dh_ortho)"
     key <AE04> { [ F15, 4 ] };
+    key <CAPS> { [ Caps_Lock ] };
 };
 
 partial alphanumeric_keys modifier_keys
 xkb_symbols "ro" {
     include "us(colemak_dh_ortho)"
     key <AE04> { [ F16, 4 ] };
+    key <CAPS> { [ Caps_Lock ] };
 };
 
 partial alphanumeric_keys modifier_keys
