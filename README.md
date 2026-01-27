@@ -67,7 +67,7 @@ Press OK, and OK once again for the final time
 Done!
 
 # Installation (BSD/Linux, X11 only)
-### Works excellent, somewhat similar to Windows support (as of 2026-01-26)
+### Works excellent on the following:
 * Fedora LXDE Spin
 * Linux Mint Xfce (and KDE from the repository)
 * Void Linux Cinnamon, MATE

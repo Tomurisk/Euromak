@@ -29,6 +29,9 @@ xkb_symbols "kz" {
 };
 EOF
 
+LAYOUTS="emk(lt),emk(ro)"
+CYR="emk(kz)"
+
 echo "=== Writing ~/.XCompose ==="
 tee "$HOME/.XCompose" >/dev/null << 'EOF'
 <F15> <i> : "č"
@@ -119,17 +122,17 @@ fi
 
 echo "=== Writing ~/.local/bin/toggle-kz.sh ==="
 mkdir -p "$HOME/.local/bin"
-tee "$HOME/.local/bin/toggle-kz.sh" >/dev/null << 'EOF'
+tee "$HOME/.local/bin/toggle-kz.sh" >/dev/null << EOF
 #!/bin/bash
 
 # Get current layout
-CURRENT=$(setxkbmap -query | awk '/layout/ {print $2}')
+CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 
 # If already in kz, switch back to your normal layouts
-if [ "$CURRENT" = "emk(kz)" ]; then
-    setxkbmap -layout "emk(lt),emk(ro)"
+if [ "\$CURRENT" = "$CYR" ]; then
+    setxkbmap -layout "$LAYOUTS"
 else
-    setxkbmap -layout "emk(kz)"
+    setxkbmap -layout "$CYR"
 fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-kz.sh"
@@ -143,13 +146,13 @@ xkb_symbols "rshift_to_dollar" {
 EOF
 
 echo "=== Writing ~/.local/bin/startup.sh ==="
-tee "$HOME/.local/bin/startup.sh" >/dev/null << 'EOF'
+tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 #!/bin/bash
 
-setxkbmap -layout "emk(lt),emk(ro)"
+setxkbmap -layout "$LAYOUTS"
 setxkbmap -print \
   | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \
-  | xkbcomp -I$HOME/.xkb -xkm - :0
+  | xkbcomp -I\$HOME/.xkb -xkm - :0
 xbindkeys
 xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90
 EOF
