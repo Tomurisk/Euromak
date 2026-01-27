@@ -71,8 +71,8 @@ Done!
 * Fedora LXDE Spin
 * Linux Mint Xfce (and KDE from the repository)
 * Void Linux Cinnamon, MATE
-* FreeBSD Xfce
-* OpenIndiana MATE (works as-is, no `toggle-kz.sh` support)
+* FreeBSD Xfce, MATE
+* OpenIndiana MATE (works as-is, no `toggle-cyr.sh` support)
 
 BSD variants need this change in the file:
 ```bash

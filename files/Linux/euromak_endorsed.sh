@@ -150,6 +150,7 @@ tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 #!/bin/bash
 
 setxkbmap -layout "$LAYOUTS"
+sleep 0.5
 setxkbmap -print \
   | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \
   | xkbcomp -I\$HOME/.xkb -xkm - :0
