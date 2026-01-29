@@ -23,6 +23,14 @@ xkb_symbols "ua" {
     include "ua"
     key <AE04> { [ F17, 4 ] };
 };
+
+xkb_symbols "rshift_to_dollar" {
+    key <RTSH> { [ dollar ] };
+};
+
+xkb_symbols "rshift_to_semicolon" {
+    key <RTSH> { [ semicolon ] };
+};
 EOF
 
 LAYOUTS="emk(lt),emk(ro)"
@@ -183,28 +191,19 @@ CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 if [ "\$CURRENT" = "$CYR" ]; then
     setxkbmap -layout "$LAYOUTS"
     setxkbmap -print \\
-      | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \\
-      | xkbcomp -I\$HOME/.xkb -xkm - :0
+      | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
+      | xkbcomp -xkm - :0
 else
     setxkbmap -layout "$CYR"
     setxkbmap -print \\
-      | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_semicolon)"/' \\
-      | xkbcomp -I\$HOME/.xkb -xkm - :0
+      | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_semicolon)"/' \\
+      | xkbcomp -xkm - :0
 fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
 
 echo "=== Dollar sign ==="
 mkdir -p ~/.xkb/symbols
-tee ~/.xkb/symbols/custom >/dev/null <<'EOF'
-xkb_symbols "rshift_to_dollar" {
-    key <RTSH> { [ dollar ] };
-};
-
-xkb_symbols "rshift_to_semicolon" {
-    key <RTSH> { [ semicolon ] };
-};
-EOF
 
 echo "=== Writing ~/.local/bin/startup.sh ==="
 tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
@@ -212,8 +211,8 @@ tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 
 setxkbmap -layout "$LAYOUTS"
 setxkbmap -print \\
-  | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \\
-  | xkbcomp -I\$HOME/.xkb -xkm - :0
+  | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
+  | xkbcomp -xkm - :0
 xbindkeys
 xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90
 EOF
