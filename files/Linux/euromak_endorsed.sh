@@ -182,8 +182,14 @@ CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 # If already in Cyrillic, switch back to your normal layouts
 if [ "\$CURRENT" = "$CYR" ]; then
     setxkbmap -layout "$LAYOUTS"
+    setxkbmap -print \\
+      | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \\
+      | xkbcomp -I\$HOME/.xkb -xkm - :0
 else
     setxkbmap -layout "$CYR"
+    setxkbmap -print \\
+      | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_semicolon)"/' \\
+      | xkbcomp -I\$HOME/.xkb -xkm - :0
 fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
@@ -194,6 +200,10 @@ tee ~/.xkb/symbols/custom >/dev/null <<'EOF'
 xkb_symbols "rshift_to_dollar" {
     key <RTSH> { [ dollar ] };
 };
+
+xkb_symbols "rshift_to_semicolon" {
+    key <RTSH> { [ semicolon ] };
+};
 EOF
 
 echo "=== Writing ~/.local/bin/startup.sh ==="
@@ -201,7 +211,6 @@ tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 #!/bin/bash
 
 setxkbmap -layout "$LAYOUTS"
-sleep 0.5
 setxkbmap -print \\
   | sed 's/\(xkb_symbols.*\)"/\1+custom(rshift_to_dollar)"/' \\
   | xkbcomp -I\$HOME/.xkb -xkm - :0
