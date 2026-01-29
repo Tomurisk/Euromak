@@ -19,18 +19,14 @@ xkb_symbols "ro" {
 };
 
 partial alphanumeric_keys modifier_keys
-xkb_symbols "kz" {
-    include "kz(basic)"
-    key <AE08> { [ Ukrainian_ie,              Ukrainian_IE,              8, asterisk ] };
-    key <AE09> { [ Ukrainian_yi,              Ukrainian_YI,              9, parenleft ] };
-    key <AE10> { [ Ukrainian_ghe_with_upturn, Ukrainian_GHE_WITH_UPTURN, 0, parenright ] };
-    key <AE11> { [ apostrophe,                emdash,                    minus, underscore ] };
-    key <AE12> { [ Cyrillic_io,               Cyrillic_IO,               equal, plus ] };
+xkb_symbols "ua" {
+    include "ua"
+    key <AE04> { [ F17, 4 ] };
 };
 EOF
 
 LAYOUTS="emk(lt),emk(ro)"
-CYR="emk(kz)"
+CYR="emk(ua)"
 
 echo "=== Writing ~/.XCompose ==="
 tee "$HOME/.XCompose" >/dev/null << 'EOF'
@@ -57,6 +53,8 @@ tee "$HOME/.XCompose" >/dev/null << 'EOF'
 <F15> <y> : "–"
 <F15> <Y> : "–"
 
+<F15> <5> : "€"
+
 <F15> <9> : "„"
 <F15> <0> : "“"
 
@@ -77,13 +75,66 @@ tee "$HOME/.XCompose" >/dev/null << 'EOF'
 <F16> <y> : "–"
 <F16> <Y> : "–"
 
+<F16> <5> : "€"
+
 <F16> <9> : "„"
 <F16> <0> : "”"
 
-<F16> <k> : "«"
-<F16> <h> : "»"
+<F16> <parenleft> : "«"
+<F16> <parenright> : "»"
 
 <F16> : ""
+
+<F17> <Cyrillic_o> : "ы"
+<F17> <Cyrillic_ve> : "қ"
+<F17> <Cyrillic_a> : "ғ"
+<F17> <Ukrainian_i> : "ң"
+<F17> <Cyrillic_el> : "ұ"
+<F17> <Cyrillic_zhe> : "ә"
+<F17> <Cyrillic_er> : "ө"
+<F17> <Cyrillic_de> : "ү"
+<F17> <Cyrillic_ef> : "э"
+<F17> <Cyrillic_pe> : "ъ"
+<F17> <Cyrillic_ie> : "ё"
+<F17> <Cyrillic_ghe> : "ґ"
+<F17> <Cyrillic_en> : "һ"
+<F17> <Cyrillic_ya> : "ћ"
+<F17> <Cyrillic_shorti> : "ј"
+<F17> <Cyrillic_te> : "љ"
+<F17> <Cyrillic_softsign> : "њ"
+<F17> <Cyrillic_be> : "ђ"
+<F17> <Cyrillic_yu> : "џ"
+
+<F17> <Cyrillic_O> : "Ы"
+<F17> <Cyrillic_VE> : "Қ"
+<F17> <Cyrillic_A> : "Ғ"
+<F17> <Ukrainian_I> : "Ң"
+<F17> <Cyrillic_EL> : "Ұ"
+<F17> <Cyrillic_ZHE> : "Ә"
+<F17> <Cyrillic_ER> : "Ө"
+<F17> <Cyrillic_DE> : "Ү"
+<F17> <Cyrillic_EF> : "Э"
+<F17> <Cyrillic_PE> : "Ъ"
+<F17> <Cyrillic_IE> : "Ё"
+<F17> <Cyrillic_GHE> : "Ґ"
+<F17> <Cyrillic_EN> : "Һ"
+<F17> <Cyrillic_YA> : "Ћ"
+<F17> <Cyrillic_SHORTI> : "Ј"
+<F17> <Cyrillic_TE> : "Љ"
+<F17> <Cyrillic_SOFTSIGN> : "Њ"
+<F17> <Cyrillic_BE> : "Ђ"
+<F17> <Cyrillic_YU> : "Џ"
+
+<F17> <Cyrillic_shcha> : "—"
+<F17> <Cyrillic_SHCHA> : "—"
+
+<F17> <9> : "«"
+<F17> <0> : "»"
+
+<F17> <parenleft> : "„"
+<F17> <parenright> : "“"
+
+<F17> : ""
 EOF
 
 echo "=== Writing ~/.xbindkeysrc ==="
