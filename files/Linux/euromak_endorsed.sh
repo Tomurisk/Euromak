@@ -179,13 +179,12 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 EOF
-fi
-
-echo "=== Setting console to use Colemak-DH as base layout ==="
-sudo tee /etc/vconsole.conf >/dev/null << 'EOF'
+    echo "=== Setting console to use Colemak-DH as base layout ==="
+    sudo tee /etc/vconsole.conf >/dev/null << 'EOF'
 KEYMAP=us-colemak_dh_ortho
 FONT=eurlatgr
 EOF
+fi
 
 echo "=== Writing ~/.local/bin/toggle-cyr.sh ==="
 mkdir -p "$HOME/.local/bin"
