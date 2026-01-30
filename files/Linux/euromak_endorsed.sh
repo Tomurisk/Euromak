@@ -241,7 +241,7 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/bin/sh -c 'set -o pipefail; xscreensaver-command -watch | \\
+ExecStart=/bin/sh -c 'xscreensaver-command -watch | \\
     while read -r line; do \\
         if echo "\$line" | grep -q '^LOCK'; then \\
             setxkbmap -layout "$LAYOUTS"; \\
