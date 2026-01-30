@@ -156,7 +156,7 @@ tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
     m:0x14 + c:49
 EOF
 
-echo "=== Setting up system base keyboard ==="
+echo "=== Setting up Xorg to use Colemak-DH as base layout ==="
 # Detect Debian
 if grep -qi "debian" /etc/os-release; then
     echo "Debian detected — using /etc/default/keyboard instead of Xorg config."
@@ -180,6 +180,12 @@ Section "InputClass"
 EndSection
 EOF
 fi
+
+echo "=== Setting console to use Colemak-DH as base layout ==="
+sudo tee /etc/vconsole.conf > /dev/null <<EOL
+KEYMAP=us-colemak_dh_ortho
+FONT=eurlatgr
+EOL
 
 echo "=== Writing ~/.local/bin/toggle-cyr.sh ==="
 mkdir -p "$HOME/.local/bin"
