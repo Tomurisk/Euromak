@@ -73,6 +73,8 @@ Done!
 * Void Linux Cinnamon, MATE
 * FreeBSD Xfce, MATE
 * OpenIndiana MATE (works as-is, no `toggle-cyr.sh` support)
+* openSUSE Leap LXDE (LXDE from Tumbleweed repository)
+* TUXEDO OS
 
 BSD variants need this change in the file:
 ```bash
