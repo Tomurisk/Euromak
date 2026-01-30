@@ -210,9 +210,6 @@ fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
 
-echo "=== Dollar sign override ==="
-mkdir -p ~/.xkb/symbols
-
 echo "=== Writing ~/.local/bin/startup.sh ==="
 tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
 #!/bin/bash
@@ -230,7 +227,7 @@ chmod +x "$HOME/.local/bin/startup.sh"
 has_systemd=$(command -v systemctl &>/dev/null && echo true || echo false)
 has_xscreensaver=$(command -v xscreensaver-command &>/dev/null && echo true || echo false)
 
-if [[ $has_systemd == true && $has_xscreensaver == true ]] then
+if [[ $has_systemd == true && $has_xscreensaver == true ]]; then
     echo "Do you want to enable the optional service that"
     read -p "disables Cyrillic layout for xscreensaver? (y/N): " enable_service
 fi
@@ -245,13 +242,12 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/bin/sh -c 'xscreensaver-command -watch | \\
+ExecStart=/bin/sh -c 'set -o pipefail; xscreensaver-command -watch | \\
     while read -r line; do \\
-    line=\$(echo "\$line" | xargs); \\
-        if [[ \$line =~ ^LOCK ]]; then \\
+        if echo "\$line" | grep -q '^LOCK'; then \\
             setxkbmap -layout "$LAYOUTS"; \\
             setxkbmap -print | \\
-            sed '\''s/\\\\(xkb_symbols.*\\\\)"\\\\1+emk(rshift_to_dollar)"'\'' | \\
+            sed '\''s/\\(xkb_symbols.*\\)"/\\1+emk(rshift_to_dollar)"/'\'' | \\
             xkbcomp -I/usr/share/X11/xkb -xkb - :0 >/dev/null 2>&1; \\
         fi; \\
     done \\
