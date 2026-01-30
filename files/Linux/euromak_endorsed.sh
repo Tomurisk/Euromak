@@ -2,6 +2,8 @@
 
 set -e
 
+PERSONAL_AUTOSTART="xinput --set-prop \"SteelSeries SteelSeries Rival 3\" \"libinput Accel Speed\" -0.90"
+
 echo "=== Writing Euromak definitions ==="
 sudo tee /usr/share/X11/xkb/symbols/emk >/dev/null << 'EOF'
 partial alphanumeric_keys modifier_keys
@@ -202,7 +204,7 @@ fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
 
-echo "=== Dollar sign ==="
+echo "=== Dollar sign override ==="
 mkdir -p ~/.xkb/symbols
 
 echo "=== Writing ~/.local/bin/startup.sh ==="
@@ -214,9 +216,51 @@ setxkbmap -print \\
   | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
   | xkbcomp -xkm - :0 >/dev/null 2>&1
 xbindkeys
-xinput --set-prop "SteelSeries SteelSeries Rival 3" "libinput Accel Speed" -0.90
+$PERSONAL_AUTOSTART
 EOF
 chmod +x "$HOME/.local/bin/startup.sh"
+
+# TODO: MATE screensaver, Xfce screensaver etc.
+has_systemd=$(command -v systemctl &>/dev/null && echo true || echo false)
+has_xscreensaver=$(command -v xscreensaver-command &>/dev/null && echo true || echo false)
+
+if [[ $has_systemd == true && $has_xscreensaver == true ]] then
+    echo "Do you want to enable the optional service that"
+    read -p "disables Cyrillic layout for xscreensaver? (y/N): " enable_service
+fi
+
+if [[ $enable_service == "y" || $enable_service == "Y" ]]; then
+    mkdir -p "$HOME/.config/systemd/user"
+    tee "$HOME/.config/systemd/user/turn-off-cyr.service" >/dev/null << EOF
+[Unit]
+Description=Turn off Cyrillic on xscreensaver LOCK
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'xscreensaver-command -watch | \\
+    while read -r line; do \\
+    line=\$(echo "\$line" | xargs); \\
+        if [[ \$line =~ ^LOCK ]]; then \\
+            setxkbmap -layout "$LAYOUTS"; \\
+            setxkbmap -print | \\
+            sed '\''s/\\\\(xkb_symbols.*\\\\)"\\\\1+emk(rshift_to_dollar)"'\'' | \\
+            xkbcomp -I/usr/share/X11/xkb -xkb - :0 >/dev/null 2>&1; \\
+        fi; \\
+    done \\
+'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+EOF
+    # Reload systemd and enable/start service
+    systemctl --user daemon-reload
+    systemctl --user enable --now turn-off-cyr.service
+    echo "Service enabled and started."
+fi
 
 echo "=== Done ==="
 echo -e "\e[91mAdd $HOME/.local/bin/startup.sh to autostart\e[0m"
