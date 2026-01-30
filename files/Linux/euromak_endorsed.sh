@@ -182,10 +182,10 @@ EOF
 fi
 
 echo "=== Setting console to use Colemak-DH as base layout ==="
-sudo tee /etc/vconsole.conf > /dev/null <<EOL
+sudo tee /etc/vconsole.conf >/dev/null << 'EOF'
 KEYMAP=us-colemak_dh_ortho
 FONT=eurlatgr
-EOL
+EOF
 
 echo "=== Writing ~/.local/bin/toggle-cyr.sh ==="
 mkdir -p "$HOME/.local/bin"
@@ -258,7 +258,6 @@ RestartSec=5
 [Install]
 WantedBy=default.target
 EOF
-    # Reload systemd and enable/start service
     systemctl --user daemon-reload
     systemctl --user enable --now turn-off-cyr.service
     echo "Service enabled and started."

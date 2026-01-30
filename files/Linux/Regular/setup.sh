@@ -54,10 +54,10 @@ else
 fi
 
 # Overwrite the vconsole.conf file with the specified configurations
-sudo tee /etc/vconsole.conf > /dev/null <<EOL
+sudo tee /etc/vconsole.conf > /dev/null <<'EOF'
 KEYMAP=us-colemak_dh_ortho
 FONT=eurlatgr
-EOL
+EOF
 
 # Print a message indicating success
 echo "Configuration overwritten at /etc/vconsole.conf"
