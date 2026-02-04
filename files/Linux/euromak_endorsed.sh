@@ -191,6 +191,15 @@ mkdir -p "$HOME/.local/bin"
 tee "$HOME/.local/bin/toggle-cyr.sh" >/dev/null << EOF
 #!/bin/bash
 
+LOCK_MODE=false
+
+# Check for -l or --lock
+case "\$1" in
+    -l|--lock)
+        LOCK_MODE=true
+        ;;
+esac
+
 # Get current layout
 CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 
@@ -200,7 +209,8 @@ if [ "\$CURRENT" = "$CYR" ]; then
     setxkbmap -print \\
       | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
       | xkbcomp -xkm - :0 >/dev/null 2>&1
-else
+# Only enter Cyrillic if NOT in lock mode
+elif [ "\$LOCK_MODE" = false ]; then
     setxkbmap -layout "$CYR"
     setxkbmap -print \\
       | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_semicolon)"/' \\
@@ -208,6 +218,17 @@ else
 fi
 EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
+
+echo "=== Writing ~/.local/share/applications/lock-screen-cyroff.desktop ==="
+tee "$HOME/.local/share/applications/lock-screen-cyroff.desktop" >/dev/null << 'EOF'
+[Desktop Entry]
+Type=Application
+Name=Lock Screen (CyrOff)
+Icon=system-lock-screen
+Exec=sh -c "~/.local/bin/toggle-cyr.sh -l && xdg-screensaver lock"
+Comment=Lock Screen to prevent unauthorized usage
+StartupNotify=false
+EOF
 
 echo "=== Writing ~/.local/bin/startup.sh ==="
 tee "$HOME/.local/bin/startup.sh" >/dev/null << EOF
@@ -222,51 +243,8 @@ $PERSONAL_AUTOSTART
 EOF
 chmod +x "$HOME/.local/bin/startup.sh"
 
-# TODO: MATE screensaver, Xfce screensaver etc.
-has_systemd=$(command -v systemctl &>/dev/null && echo true || echo false)
-has_xscreensaver=$(command -v xscreensaver-command &>/dev/null && echo true || echo false)
-
-if [[ $has_systemd == true && $has_xscreensaver == true ]]; then
-    echo "Do you want to enable the optional service that"
-    read -p "disables Cyrillic layout for xscreensaver? (y/N): " enable_service
-fi
-
-if [[ $enable_service == "y" || $enable_service == "Y" ]]; then
-    mkdir -p "$HOME/.config/systemd/user"
-    tee "$HOME/.config/systemd/user/turn-off-cyr.service" >/dev/null << EOF
-[Unit]
-Description=Turn off Cyrillic on xscreensaver LOCK
-PartOf=graphical-session.target
-After=graphical-session.target
-
-[Service]
-Type=simple
-ExecStart=/bin/sh -c 'xscreensaver-command -watch | \\
-    while read -r line; do \\
-        if echo "\$line" | grep -q '^LOCK'; then \\
-            CURRENT=\$(setxkbmap -query | awk "/layout/ {print \\\$2}"); \\
-            if [ "\$CURRENT" = "$CYR" ]; then \\
-                setxkbmap -layout "$LAYOUTS"; \\
-                setxkbmap -print | \\
-                sed '\''s/\\(xkb_symbols.*\\)"/\\1+emk(rshift_to_dollar)"/'\'' | \\
-                DISPLAY=:0.0 XAUTHORITY=/home/\$USER/.Xauthority \\
-                xkbcomp -I/usr/share/X11/xkb -xkb - :0.0 >/dev/null 2>&1; \\
-            fi; \\
-        fi; \\
-    done \\
-'
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=default.target
-EOF
-    systemctl --user daemon-reload
-    systemctl --user enable --now turn-off-cyr.service
-    echo "Service enabled and started."
-fi
-
 echo "=== Done ==="
 echo -e "\e[91mAdd $HOME/.local/bin/startup.sh to autostart\e[0m"
+echo "Replace screen locker with lock-screen-cyroff.desktop"
 echo "Install xbindkeys and xdotool"
 read -p "Reboot or re-login for XKB changes to apply."
