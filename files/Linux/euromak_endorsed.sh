@@ -244,12 +244,13 @@ Type=simple
 ExecStart=/bin/sh -c 'xscreensaver-command -watch | \\
     while read -r line; do \\
         if echo "\$line" | grep -q '^LOCK'; then \\
-            CURRENT=\$(setxkbmap -query | awk "/layout/ {print \\\$2}"); \
+            CURRENT=\$(setxkbmap -query | awk "/layout/ {print \\\$2}"); \\
             if [ "\$CURRENT" = "$CYR" ]; then \\
                 setxkbmap -layout "$LAYOUTS"; \\
                 setxkbmap -print | \\
                 sed '\''s/\\(xkb_symbols.*\\)"/\\1+emk(rshift_to_dollar)"/'\'' | \\
-                xkbcomp -I/usr/share/X11/xkb -xkb - :0 >/dev/null 2>&1; \\
+                DISPLAY=:0.0 XAUTHORITY=/home/\$USER/.Xauthority \\
+                xkbcomp -I/usr/share/X11/xkb -xkb - :0.0 >/dev/null 2>&1; \\
             fi; \\
         fi; \\
     done \\
