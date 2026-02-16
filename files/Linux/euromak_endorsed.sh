@@ -218,6 +218,7 @@ EOF
 chmod +x "$HOME/.local/bin/toggle-cyr.sh"
 
 echo "=== Writing ~/.local/share/applications/lock-screen-cyroff.desktop ==="
+mkdir -p "$HOME/.local/share/applications"
 tee "$HOME/.local/share/applications/lock-screen-cyroff.desktop" >/dev/null << 'EOF'
 [Desktop Entry]
 Type=Application
