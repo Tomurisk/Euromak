@@ -34,7 +34,7 @@ typedef struct LangPlugin {
     char *lang_path;
 } LangPlugin;
 
-static const char *lang_file = ".config/lang";
+static const char *lang_file = "/tmp/lang";
 
 /* Lookup */
 static const char* lookup(KeySym ks) {
@@ -188,7 +188,6 @@ static GtkWidget *lang_constructor(LXPanel *panel, config_setting_t *settings) {
     gtk_widget_set_name(plugin->label, "LangSwitcher");
     gtk_container_add(GTK_CONTAINER(plugin->event_box), plugin->label);
 
-    plugin->lang_path = g_build_filename(g_get_home_dir(), lang_file, NULL);
     load_lang_file(plugin);
 
     /* NEW: Monitor file changes */
