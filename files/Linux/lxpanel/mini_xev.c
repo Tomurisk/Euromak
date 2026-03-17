@@ -8,9 +8,9 @@
 
 // gcc mini_xev.c -o mini_xev $(pkg-config --cflags --libs x11 xi)
 
-/* -------------------------
-   Define your key mappings
-   ------------------------- */
+// -------------------------
+// Define your key mappings
+// -------------------------
 
 typedef struct {
     KeySym ks;
@@ -32,7 +32,7 @@ const char* lookup(KeySym ks) {
     return NULL;
 }
 
-/* ------------------------- */
+// -------------------------
 
 int main(void)
 {
@@ -51,7 +51,7 @@ int main(void)
 
     Window root = DefaultRootWindow(dpy);
 
-    /* Select RawKeyPress only */
+    // Select RawKeyPress only
     XIEventMask mask;
     unsigned char mask_data[XIMaskLen(XI_RawKeyPress)] = {0};
 
@@ -76,17 +76,17 @@ int main(void)
                     XIRawEvent *raw = ev.xcookie.data;
                     int keycode = raw->detail;
 
-                    /* Get current keyboard state */
+                    // Get current keyboard state
                     XkbStateRec state;
                     XkbGetState(dpy, XkbUseCoreKbd, &state);
 
                     int group = state.group;
                     int level = (state.mods & ShiftMask) ? 1 : 0;
 
-                    /* Convert keycode → keysym */
+                    // Convert keycode → keysym
                     KeySym ks = XkbKeycodeToKeysym(dpy, keycode, group, level);
 
-                    /* Lookup in user-defined table */
+                    // Lookup in user-defined table
                     const char *msg = lookup(ks);
                     if (msg)
                         printf("%s\n", msg);

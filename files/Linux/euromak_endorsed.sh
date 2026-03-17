@@ -36,9 +36,10 @@ xkb_symbols "rshift_to_semicolon" {
 EOF
 
 LAYOUTS="emk(lt),emk(ro)"
+CYR="emk(ua)"
+
 FIRST_LANG="LT" # First in the layouts
 CYR_LANG="UA"
-CYR="emk(ua)"
 
 echo "=== Writing ~/.XCompose ==="
 tee "$HOME/.XCompose" >/dev/null << 'EOF'
@@ -206,14 +207,14 @@ CURRENT=\$(setxkbmap -query | awk '/layout/ {print \$2}')
 # If already in Cyrillic, switch back to your normal layouts
 if [ "\$CURRENT" = "$CYR" ]; then
     setxkbmap -layout "$LAYOUTS"
-    echo "$FIRST_LANG" > /tmp/lang
+    echo "$FIRST_LANG" > /tmp/emk_lang
     setxkbmap -print \\
       | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
       | xkbcomp -xkm - :0 >/dev/null 2>&1
 # Only enter Cyrillic if NOT in lock mode
 elif [ "\$LOCK_MODE" = false ]; then
     setxkbmap -layout "$CYR"
-    echo "$CYR_LANG" > /tmp/lang
+    echo "$CYR_LANG" > /tmp/emk_lang
     setxkbmap -print \\
       | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_semicolon)"/' \\
       | xkbcomp -xkm - :0 >/dev/null 2>&1
@@ -241,7 +242,7 @@ setxkbmap -layout "$LAYOUTS"
 setxkbmap -print \\
   | sed 's/\(xkb_symbols.*\)"/\1+emk(rshift_to_dollar)"/' \\
   | xkbcomp -xkm - :0 >/dev/null 2>&1
-echo "$FIRST_LANG" > /tmp/lang
+echo "$FIRST_LANG" > /tmp/emk_lang
 xbindkeys
 $PERSONAL_AUTOSTART
 EOF

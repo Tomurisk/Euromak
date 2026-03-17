@@ -34,9 +34,9 @@ typedef struct LangPlugin {
     char *lang_path;
 } LangPlugin;
 
-static const char *lang_file = "/tmp/lang";
+static const char *lang_file = "/tmp/emk_lang";
 
-/* Lookup */
+// Lookup
 static const char* lookup(KeySym ks) {
     for (int i = 0; keymap[i].ks != 0; i++) {
         if (keymap[i].ks == ks)
@@ -45,7 +45,7 @@ static const char* lookup(KeySym ks) {
     return NULL;
 }
 
-/* Save file */
+// Save file
 static gboolean write_lang_file(gpointer data) {
     LangPlugin *plugin = data;
     FILE *f = g_fopen(plugin->lang_path, "w");
@@ -56,7 +56,7 @@ static gboolean write_lang_file(gpointer data) {
     return FALSE;
 }
 
-/* UI update */
+// UI update
 static void update_display(LangPlugin *plugin) {
     char *markup = g_strdup_printf("<b>%s</b>",
                                    plugin->current_lang[0] ?
@@ -74,7 +74,7 @@ static void set_language(LangPlugin *plugin, const char *lang) {
     }
 }
 
-/* Load file */
+// Load file
 static void load_lang_file(LangPlugin *plugin) {
     FILE *f = g_fopen(plugin->lang_path, "r");
     if (f) {
@@ -89,7 +89,7 @@ static void load_lang_file(LangPlugin *plugin) {
     update_display(plugin);
 }
 
-/* NEW: File monitor callback */
+// File monitor callback
 static void on_lang_file_changed(GFileMonitor *monitor,
                                  GFile *file,
                                  GFile *other_file,
@@ -104,7 +104,7 @@ static void on_lang_file_changed(GFileMonitor *monitor,
     }
 }
 
-/* XInput2 event loop */
+// XInput2 event loop
 static gboolean poll_events(GIOChannel *chan, GIOCondition cond, gpointer data) {
     LangPlugin *plugin = data;
     XEvent ev;
@@ -142,7 +142,7 @@ static gboolean poll_events(GIOChannel *chan, GIOCondition cond, gpointer data) 
     return TRUE;
 }
 
-/* Cleanup */
+// Cleanup
 static void lang_destructor(gpointer data) {
     LangPlugin *plugin = data;
     if (plugin->dpy)
@@ -150,10 +150,12 @@ static void lang_destructor(gpointer data) {
     g_free(plugin->lang_path);
 }
 
-/* Constructor */
+// Constructor
 static GtkWidget *lang_constructor(LXPanel *panel, config_setting_t *settings) {
     LangPlugin *plugin = g_new0(LangPlugin, 1);
     plugin->panel = panel;
+
+    plugin->lang_path = g_strdup(lang_file);
 
     plugin->dpy = XOpenDisplay(NULL);
     if (!plugin->dpy) {
@@ -190,7 +192,7 @@ static GtkWidget *lang_constructor(LXPanel *panel, config_setting_t *settings) {
 
     load_lang_file(plugin);
 
-    /* NEW: Monitor file changes */
+    // Monitor file changes
     GFile *gf = g_file_new_for_path(plugin->lang_path);
     GFileMonitor *mon = g_file_monitor_file(gf, G_FILE_MONITOR_NONE, NULL, NULL);
     g_signal_connect(mon, "changed", G_CALLBACK(on_lang_file_changed), plugin);
