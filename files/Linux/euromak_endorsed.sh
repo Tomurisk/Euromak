@@ -155,6 +155,9 @@ tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
 
 "~/.local/bin/toggle-cyr.sh"
     m:0x14 + c:49
+
+"sleep 0.2; xdotool key ctrl+shift+v"
+    c:67
 EOF
 
 echo "=== Setting up Xorg to use Colemak-DH as base layout ==="
