@@ -1,4 +1,10 @@
 ------------------------------------------------------------
+-- IPC (required for terminal: hs -c "restartTaps()")
+------------------------------------------------------------
+
+require("hs.ipc")
+
+------------------------------------------------------------
 -- GLOBAL STATE
 ------------------------------------------------------------
 
@@ -60,6 +66,11 @@ function PreviousLayout()
     hs.alert.show(newLayout .. " (LT mode)")
 end
 
+-- NEW: Caps Lock detection
+function isCapsOn()
+    return hs.hid.capslock.get()
+end
+
 ------------------------------------------------------------
 -- LT / RO MODE TOGGLE (Option + Shift)
 ------------------------------------------------------------
@@ -119,25 +130,25 @@ setmetatable(ROMap, { __index = BaseMap })
 ------------------------------------------------------------
 
 CYRKeycodeMap = {
-    [38] = "ы",  ["38S"] = "Ы",   -- о  (j)
-    [2]  = "қ",  ["2S"]  = "Қ",   -- в  (d)
-    [3]  = "ғ",  ["3S"]  = "Ғ",   -- а  (f)
-    [1]  = "ң",  ["1S"]  = "Ң",   -- і  (s)
-    [40] = "ұ",  ["40S"] = "Ұ",   -- л  (k)
-    [41] = "ә",  ["41S"] = "Ә",   -- ж  (;)
-    [4]  = "ө",  ["4S"]  = "Ө",   -- р  (h)
-    [37] = "ү",  ["37S"] = "Ү",   -- д  (l)
-    [0]  = "э",  ["0S"]  = "Э",   -- ф  (a)
-    [5]  = "ъ",  ["5S"]  = "Ъ",   -- п  (g)
-    [17] = "ё",  ["17S"] = "Ё",   -- е  (t)
-    [16] = "һ",  ["16S"] = "Һ",   -- н  (y)
-    [6]  = "ћ",  ["6S"]  = "Ћ",   -- я  (z)
-    [12] = "ј",  ["12S"] = "Ј",   -- й  (q)
-    [45] = "љ",  ["45S"] = "Љ",   -- т  (n)
-    [46] = "њ",  ["46S"] = "Њ",   -- ь  (m)
-    [43] = "ђ",  ["43S"] = "Ђ",   -- б  (,)
-    [47] = "џ",  ["47S"] = "Џ",   -- ю  (.)
-    [31] = "—",  ["31S"] = "—",   -- щ  (o)
+    [38] = "ы",  ["38S"] = "Ы",
+    [2]  = "қ",  ["2S"]  = "Қ",
+    [3]  = "ғ",  ["3S"]  = "Ғ",
+    [1]  = "ң",  ["1S"]  = "Ң",
+    [40] = "ұ",  ["40S"] = "Ұ",
+    [41] = "ә",  ["41S"] = "Ә",
+    [4]  = "ө",  ["4S"]  = "Ө",
+    [37] = "ү",  ["37S"] = "Ү",
+    [0]  = "э",  ["0S"]  = "Э",
+    [5]  = "ъ",  ["5S"]  = "Ъ",
+    [17] = "ё",  ["17S"] = "Ё",
+    [16] = "һ",  ["16S"] = "Һ",
+    [6]  = "ћ",  ["6S"]  = "Ћ",
+    [12] = "ј",  ["12S"] = "Ј",
+    [45] = "љ",  ["45S"] = "Љ",
+    [46] = "њ",  ["46S"] = "Њ",
+    [43] = "ђ",  ["43S"] = "Ђ",
+    [47] = "џ",  ["47S"] = "Џ",
+    [31] = "—",  ["31S"] = "—",
 
     -- Symbols
     [25] = "«",
@@ -153,7 +164,7 @@ CYRKeycodeMap = {
 local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     local keyCode = e:getKeyCode()
     local flags = e:getFlags()
-    local char = e:getCharacters(true)  -- unshifted base character
+    local char = e:getCharacters(true)
     local now = hs.timer.secondsSinceEpoch()
 
     if not char or #char ~= 1 then char = "" end
@@ -162,12 +173,10 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     -- Step 1: Handle "4" invoker
     --------------------------------------------------------
     if keyCode == FOUR_KEYCODE then
-        -- Shift+4 always produces $ immediately, no invoker behaviour.
-        -- Use a real key event (not keyStrokes) so the OS delivers key-repeat.
         if flags.shift then
             if skipNext4 then
                 skipNext4 = false
-                return false  -- let this synthetic event pass through normally
+                return false
             end
             reset4()
             skipNext4 = true
@@ -183,7 +192,7 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 
         last4Time = now
         waitingForSecondKey = true
-        pending4Shifted = false  -- shift was not held (checked above)
+        pending4Shifted = false
 
         if pending4Timer then pending4Timer:stop() end
         pending4Timer = hs.timer.doAfter(2.0, function()
@@ -200,16 +209,19 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     -- Step 2: Handle second key after 4
     --------------------------------------------------------
     if waitingForSecondKey then
-        local wasShifted = flags.shift
+        local wasShifted = flags.shift or isCapsOn()
         reset4()
 
         local layout = currentLayout()
         local out = nil
 
         if layout == "Ukrainian" then
-            local key = wasShifted and (tostring(keyCode) .. "S") or keyCode
+            -- FIX: Caps Lock should uppercase Cyrillic too
+            local shifted = flags.shift or isCapsOn()
+            local key = shifted and (tostring(keyCode) .. "S") or keyCode
             out = CYRKeycodeMap[key]
         else
+            -- LT/RO: Caps Lock uppercases lookup key
             local lookupKey = wasShifted and char:upper() or char
             if ro then
                 out = ROMap[lookupKey]
@@ -224,14 +236,11 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
                 hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
             end
         else
-            -- No map hit: replay the key.  Build the modifier list explicitly
-            -- so shift is guaranteed to be included when it was held — this
-            -- ensures 4+Shift+c → C, 4+Shift+d → D, etc.
             local mods = {}
-            if flags.shift   then table.insert(mods, "shift")   end
-            if flags.alt     then table.insert(mods, "alt")     end
-            if flags.cmd     then table.insert(mods, "cmd")     end
-            if flags.ctrl    then table.insert(mods, "ctrl")    end
+            if flags.shift then table.insert(mods, "shift") end
+            if flags.alt   then table.insert(mods, "alt")   end
+            if flags.cmd   then table.insert(mods, "cmd")   end
+            if flags.ctrl  then table.insert(mods, "ctrl")  end
             hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
         end
         return true
@@ -253,3 +262,33 @@ hs.hotkey.bind({"alt"}, "space", function()
         PreviousLayout()
     end
 end)
+
+------------------------------------------------------------
+-- EVENTTAP WATCHDOG
+------------------------------------------------------------
+
+function restartTaps()
+    tap:stop()
+    tap:start()
+    modtap:stop()
+    modtap:start()
+end
+
+local watchdog = hs.timer.doEvery(20, restartTaps)
+
+------------------------------------------------------------
+-- CAFFEINATE WATCHER
+------------------------------------------------------------
+
+local wakeWatcher = hs.caffeinate.watcher.new(function(event)
+    local wakeEvents = {
+        [hs.caffeinate.watcher.screensDidWake]         = true,
+        [hs.caffeinate.watcher.sessionDidBecomeActive] = true,
+        [hs.caffeinate.watcher.screensDidUnlock]       = true,
+    }
+    if wakeEvents[event] then
+        restartTaps()
+    end
+end)
+
+wakeWatcher:start()
