@@ -292,3 +292,17 @@ local wakeWatcher = hs.caffeinate.watcher.new(function(event)
 end)
 
 wakeWatcher:start()
+
+------------------------------------------------------------
+-- F20 → Cmd+W
+------------------------------------------------------------
+
+local dpiKey = 113
+
+hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
+    if e:getKeyCode() == dpiKey then
+        hs.eventtap.keyStroke({"cmd"}, "w")
+        return true
+    end
+    return false
+end):start()
