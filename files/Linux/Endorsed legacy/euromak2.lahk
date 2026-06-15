@@ -3,7 +3,7 @@ Run, xmodmap ~/.Xmodmap
 
 5::Numpad5
 
-F20::
+F19::
     Run, xdg-open /home/REAL_USER/Desktop/euromak.lahk
     ExitApp
 return

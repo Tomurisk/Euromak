@@ -3,7 +3,7 @@ ro = false
 5::Numpad5
 F2::Send, +{Enter}
 
-F20::
+F19::
 if ro = true
     ro = false
 else

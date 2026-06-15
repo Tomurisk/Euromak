@@ -1,7 +1,7 @@
-keycode 66 = F20
+keycode 66 = F19
 clear lock
 clear mod3
-add mod3 = F20
+add mod3 = F19
 
 keycode 67 = Caps_Lock
 clear Lock

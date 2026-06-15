@@ -294,10 +294,10 @@ end)
 wakeWatcher:start()
 
 ------------------------------------------------------------
--- F20 → Cmd+W
+-- F19 → Cmd+W
 ------------------------------------------------------------
 
-local dpiKey = 113
+local dpiKey = 80
 
 hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
     if e:getKeyCode() == dpiKey then

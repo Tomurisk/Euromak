@@ -151,7 +151,7 @@ EOF
 echo "=== Writing ~/.xbindkeysrc ==="
 tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
 "sleep 0.2; xdotool key ctrl+w"
-    c:193
+    c:197
 
 "~/.local/bin/toggle-cyr.sh"
     m:0x14 + c:49
