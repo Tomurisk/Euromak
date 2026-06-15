@@ -195,10 +195,11 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
         pending4Shifted = false
 
         if pending4Timer then pending4Timer:stop() end
+
+        -- FIX: single 4 press should NOT output "4"
         pending4Timer = hs.timer.doAfter(2.0, function()
             if waitingForSecondKey then
-                reset4()
-                hs.eventtap.keyStrokes("4")
+                reset4()   -- just cancel, no output
             end
         end)
 
@@ -216,12 +217,10 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
         local out = nil
 
         if layout == "Ukrainian" then
-            -- FIX: Caps Lock should uppercase Cyrillic too
             local shifted = flags.shift or isCapsOn()
             local key = shifted and (tostring(keyCode) .. "S") or keyCode
             out = CYRKeycodeMap[key]
         else
-            -- LT/RO: Caps Lock uppercases lookup key
             local lookupKey = wasShifted and char:upper() or char
             if ro then
                 out = ROMap[lookupKey]
