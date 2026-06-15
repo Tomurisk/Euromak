@@ -297,12 +297,6 @@ wakeWatcher:start()
 -- F19 → Cmd+W
 ------------------------------------------------------------
 
-local dpiKey = 80
-
-hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
-    if e:getKeyCode() == dpiKey then
-        hs.eventtap.keyStroke({"cmd"}, "w")
-        return true
-    end
-    return false
-end):start()
+hs.hotkey.bind({}, "F19", function()
+    hs.eventtap.keyStroke({"cmd"}, "w")
+end)
