@@ -83,7 +83,7 @@
             <key code="47" output="."/>
             <key code="48" output="&#x0009;"/>
             <key code="49" output=" "/>
-            <key code="50" output="\"/>
+            <key code="50" output="`"/>
             <key code="51" output="&#x0008;"/>
             <key code="52" output="&#x0003;"/>
             <key code="53" output="&#x001B;"/>
@@ -97,7 +97,7 @@
             <key code="71" output=""/>
             <key code="72" output=""/>
             <key code="75" output="/"/>
-            <key code="76" output=""/>
+            <key code="76" output="&#x000D;"/>
             <key code="77" output=""/>
             <key code="78" output="-"/>
             <key code="81" output="="/>
@@ -124,10 +124,10 @@
             <key code="118" output=""/>
             <key code="120" output=""/>
             <key code="122" output=""/>
-            <key code="123" output=""/>
-            <key code="124" output=""/>
-            <key code="125" output=""/>
-            <key code="126" output=""/>
+            <key code="123" output="&#x001C;"/>
+            <key code="124" output="&#x001D;"/>
+            <key code="125" output="&#x001F;"/>
+            <key code="126" output="&#x001E;"/>
         </keyMap>
 
         <!-- ========================= -->
@@ -181,17 +181,41 @@
             <key code="40" output="E"/>
             <key code="41" output="O"/>
             <key code="42" output="|"/>
-            <key code="43" output="&lt;"/>
+            <key code="43" output="&#x003C;"/>
             <key code="44" output="?"/>
             <key code="45" output="K"/>
             <key code="46" output="H"/>
-            <key code="47" output="&gt;"/>
+            <key code="47" output="&#x003E;"/>
             <key code="48" output="&#x0009;"/>
             <key code="49" output=" "/>
-            <key code="50" output="|"/>
+            <key code="50" output="~"/>
             <key code="51" output="&#x0008;"/>
             <key code="52" output="&#x0003;"/>
             <key code="53" output="&#x001B;"/>
+
+            <!-- numpad + empty keys -->
+            <key code="65" output="."/>
+            <key code="66" output=""/>
+            <key code="67" output="*"/>
+            <key code="69" output="+"/>
+            <key code="70" output=""/>
+            <key code="71" output=""/>
+            <key code="72" output=""/>
+            <key code="75" output="/"/>
+            <key code="76" output="&#x000D;"/>
+            <key code="77" output=""/>
+            <key code="78" output="-"/>
+            <key code="81" output="="/>
+            <key code="82" output="0"/>
+            <key code="83" output="1"/>
+            <key code="84" output="2"/>
+            <key code="85" output="3"/>
+            <key code="86" output="4"/>
+            <key code="87" output="5"/>
+            <key code="88" output="6"/>
+            <key code="89" output="7"/>
+            <key code="91" output="8"/>
+            <key code="92" output="9"/>
 
             <!-- empty keys preserved -->
             <key code="96" output=""/>
@@ -206,10 +230,10 @@
             <key code="118" output=""/>
             <key code="120" output=""/>
             <key code="122" output=""/>
-            <key code="123" output=""/>
-            <key code="124" output=""/>
-            <key code="125" output=""/>
-            <key code="126" output=""/>
+            <key code="123" output="&#x001C;"/>
+            <key code="124" output="&#x001D;"/>
+            <key code="125" output="&#x001F;"/>
+            <key code="126" output="&#x001E;"/>
         </keyMap>
 
         <!-- ========================= -->
@@ -270,10 +294,34 @@
             <key code="47" output="."/>
             <key code="48" output="&#x0009;"/>
             <key code="49" output=" "/>
-            <key code="50" output="/"/>
+            <key code="50" output="`"/>
             <key code="51" output="&#x0008;"/>
             <key code="52" output="&#x0003;"/>
             <key code="53" output="&#x001B;"/>
+
+            <!-- numpad + empty keys -->
+            <key code="65" output="."/>
+            <key code="66" output=""/>
+            <key code="67" output="*"/>
+            <key code="69" output="+"/>
+            <key code="70" output=""/>
+            <key code="71" output=""/>
+            <key code="72" output=""/>
+            <key code="75" output="/"/>
+            <key code="76" output="&#x000D;"/>
+            <key code="77" output=""/>
+            <key code="78" output="-"/>
+            <key code="81" output="="/>
+            <key code="82" output="0"/>
+            <key code="83" output="1"/>
+            <key code="84" output="2"/>
+            <key code="85" output="3"/>
+            <key code="86" output="4"/>
+            <key code="87" output="5"/>
+            <key code="88" output="6"/>
+            <key code="89" output="7"/>
+            <key code="91" output="8"/>
+            <key code="92" output="9"/>
 
             <!-- empty keys preserved -->
             <key code="96" output=""/>
@@ -288,10 +336,10 @@
             <key code="118" output=""/>
             <key code="120" output=""/>
             <key code="122" output=""/>
-            <key code="123" output=""/>
-            <key code="124" output=""/>
-            <key code="125" output=""/>
-            <key code="126" output=""/>
+            <key code="123" output="&#x001C;"/>
+            <key code="124" output="&#x001D;"/>
+            <key code="125" output="&#x001F;"/>
+            <key code="126" output="&#x001E;"/>
         </keyMap>
         <keyMap index="3">
             <key code="4" output="™"/>   <!-- M -->

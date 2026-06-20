@@ -17,8 +17,6 @@ local FOUR_KEYCODE = 21
 layoutStack = {}
 
 local pending4Timer = nil
-local pending4Shifted = false
-local skipNext4 = false
 
 ------------------------------------------------------------
 -- HELPERS
@@ -51,7 +49,6 @@ end
 
 function reset4()
     waitingForSecondKey = false
-    pending4Shifted = false
     last4Time = 0
     if pending4Timer then
         pending4Timer:stop()
@@ -66,7 +63,7 @@ function PreviousLayout()
     hs.alert.show(newLayout .. " (LT mode)")
 end
 
--- NEW: Caps Lock detection
+-- Caps Lock detection
 function isCapsOn()
     return hs.hid.capslock.get()
 end
@@ -158,6 +155,27 @@ CYRKeycodeMap = {
 }
 
 ------------------------------------------------------------
+-- VM / PASSTHROUGH APPS (compose key disabled)
+------------------------------------------------------------
+
+local passthroughBundles = {
+    ["com.vmware.fusion"]                       = true,
+    ["org.virtualbox.app.VirtualBoxVM"]         = true,
+    ["com.parallels.desktop.console"]           = true,
+    ["com.utmapp.UTM"]                          = true,
+    ["net.sf.vncviewer"]                        = true,
+    ["com.realvnc.vncviewer"]                   = true,
+    ["com.tigervnc.tigervnc"]                   = true,
+    ["com.microsoft.rdc.macos"]                 = true,  -- Microsoft Remote Desktop
+    ["com.citrix.receiver.virtualonlineplus"]    = true,
+}
+
+local function isFrontAppPassthrough()
+    local app = hs.application.frontmostApplication()
+    return app and passthroughBundles[app:bundleID()] or false
+end
+
+------------------------------------------------------------
 -- MAIN EVENTTAP (4 → next key)
 ------------------------------------------------------------
 
@@ -169,19 +187,19 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 
     if not char or #char ~= 1 then char = "" end
 
+    -- Pass everything through untouched for VM/VNC apps
+    if isFrontAppPassthrough() then
+        if waitingForSecondKey then reset4() end
+        return false
+    end
+
     --------------------------------------------------------
     -- Step 1: Handle "4" invoker
     --------------------------------------------------------
     if keyCode == FOUR_KEYCODE then
         if flags.shift then
-            if skipNext4 then
-                skipNext4 = false
-                return false
-            end
-            reset4()
-            skipNext4 = true
-            hs.eventtap.event.newKeyEvent({"shift"}, "4", true):post()
-            return true
+            -- Pass Shift+4 ($) through untouched — no re-posting, no loop
+            return false
         end
 
         if now - last4Time <= double4Window then
@@ -192,14 +210,12 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 
         last4Time = now
         waitingForSecondKey = true
-        pending4Shifted = false
 
         if pending4Timer then pending4Timer:stop() end
 
-        -- FIX: single 4 press should NOT output "4"
         pending4Timer = hs.timer.doAfter(2.0, function()
             if waitingForSecondKey then
-                reset4()   -- just cancel, no output
+                reset4()   -- timeout: cancel silently, no output
             end
         end)
 
