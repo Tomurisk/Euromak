@@ -89,6 +89,19 @@ Go to **files > Linux** and download **euromak_endorsed.sh**, then run it. That 
 
 [👉️ Or access it directly](https://github.com/Tomurisk/Euromak/raw/refs/heads/main/files/Linux/euromak_endorsed.sh)
 
+# Installation (Mac, eww...)
+Add Ukrainian keyboard layout with **Settings > Keyboard > Input Sources > + > Ukrainian** (for a Cyrillic layout)
+
+Go to **files > Mac** and download **Colemak DH Matrix.keylayout**, place it in **/Library/Keyboard Layouts**
+
+Log out, in the login screen select **Colemak DH Matrix** as input layout, sign in with your password – this should set **Colemak DH Matrix** as default input layout in the login screen
+
+Install Hammerspoon [from its GitHub releases](https://github.com/Hammerspoon/hammerspoon/releases) or by running `brew install --cask hammerspoon`
+
+Go to **files > Mac** and download **init.lua**, place it in **~/.hammerspoon**
+
+Make Hammerspoon launch at log on with **Settings > General > Login Items > + > Applications > Hammerspoon**
+
 # Work in progress
 Right now there are not many layouts to offer. Currently Lithuanian and Romanian layouts are available, as well as a version, which combines both and makes them
 switchable within the mod (with the Caps Lock key). If you would like to contribute your language to the project, open a pull request.
