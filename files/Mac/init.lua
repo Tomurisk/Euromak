@@ -14,7 +14,6 @@ last4Time = 0
 double4Window = 0.50
 
 local FOUR_KEYCODE = 21
-layoutStack = {}
 
 local pending4Timer = nil
 
@@ -30,21 +29,45 @@ function switchLayout(name)
     hs.keycodes.setLayout(name)
 end
 
-function pushUkrainian()
-    local cur = currentLayout()
-    table.insert(layoutStack, cur)
-    ro = false
-    switchLayout("Ukrainian")
-    hs.alert.show("Layout → Ukrainian")
+-- Returns the Colemak-DH layout name available in this session, or nil
+function colemakLayout()
+    for _, name in ipairs(hs.keycodes.layouts()) do
+        if name:find("Colemak") and name:find("DH") then
+            return name
+        end
+    end
+    return nil
 end
 
-function popLayout()
-    if #layoutStack > 0 then
-        local prev = table.remove(layoutStack)
-        switchLayout(prev)
-    else
-        hs.alert.show("Layout stack empty")
+-- Returns true if current layout is Ukrainian
+function isUkrainian()
+    return currentLayout() == "Ukrainian"
+end
+
+-- Returns true if current layout is a Colemak-DH variant
+function isColemak()
+    local cur = currentLayout()
+    return cur:find("Colemak") ~= nil and cur:find("DH") ~= nil
+end
+
+-- Toggle between Colemak-DH and Ukrainian.
+-- If no Colemak-DH layout exists in this session, do nothing.
+-- If current layout is neither, do nothing.
+function toggleUkrainian()
+    local colemak = colemakLayout()
+    if not colemak then return end  -- no Colemak-DH found, script disabled
+
+    local cur = currentLayout()
+    if cur == "Ukrainian" then
+        switchLayout(colemak)
+        ro = false
+        hs.alert.show(colemak .. " (LT mode)")
+    elseif isColemak() then
+        switchLayout("Ukrainian")
+        ro = false
+        hs.alert.show("Layout → Ukrainian")
     end
+    -- If neither, do nothing
 end
 
 function reset4()
@@ -54,13 +77,6 @@ function reset4()
         pending4Timer:stop()
         pending4Timer = nil
     end
-end
-
-function PreviousLayout()
-    ro = false
-    popLayout()
-    local newLayout = currentLayout()
-    hs.alert.show(newLayout .. " (LT mode)")
 end
 
 -- Caps Lock detection
@@ -79,7 +95,7 @@ local modtap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(
         local layout = currentLayout()
 
         if layout == "Ukrainian" then
-            PreviousLayout()
+            toggleUkrainian()
         else
             ro = not ro
             hs.alert.show(ro and "Romanian" or "Lithuanian")
@@ -166,8 +182,8 @@ local passthroughBundles = {
     ["net.sf.vncviewer"]                        = true,
     ["com.realvnc.vncviewer"]                   = true,
     ["com.tigervnc.tigervnc"]                   = true,
-    ["com.microsoft.rdc.macos"]                 = true,  -- Microsoft Remote Desktop
-    ["com.citrix.receiver.virtualonlineplus"]    = true,
+    ["com.microsoft.rdc.macos"]                 = true,
+    ["com.citrix.receiver.virtualonlineplus"]   = true
 }
 
 local function isFrontAppPassthrough()
@@ -271,11 +287,7 @@ tap:start()
 ------------------------------------------------------------
 
 hs.hotkey.bind({"alt"}, "space", function()
-    if currentLayout() ~= "Ukrainian" then
-        pushUkrainian()
-    else
-        PreviousLayout()
-    end
+    toggleUkrainian()
 end)
 
 ------------------------------------------------------------
