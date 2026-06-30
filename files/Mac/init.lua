@@ -356,7 +356,7 @@ wakeWatcher:start()
 ------------------------------------------------------------
 
 local lastF19Press = 0
-local cooldown = 0.1 -- 100 ms
+local cooldown = 0.25 -- 250 ms
 
 hs.hotkey.bind({}, "F19", function()
     local now = hs.timer.secondsSinceEpoch()
