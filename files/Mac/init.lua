@@ -192,10 +192,41 @@ local function isFrontAppPassthrough()
 end
 
 ------------------------------------------------------------
+-- SYNTHETIC OUTPUT GUARD
+--
+-- Wrap every synthetic keystroke WE generate (a diacritic, a
+-- literal "4" from a double-tap, or a replayed unmatched key)
+-- in emit(). While injecting is true, the eventtap below just
+-- lets whatever it sees pass through instead of processing it.
+--
+-- Without this, a real new "4" press can land in the brief
+-- gap before our own synthetic output has fully gone through.
+-- When that happens, waitingForSecondKey is already true again
+-- by the time our own output loops back through this very
+-- eventtap, and it gets misread as "the second key" of a new
+-- compose sequence — that's what was turning "šūdas" into
+-- "šuūdas". pcall ensures injecting always gets released even
+-- if fn() errors, so a bug here can't permanently wedge input.
+------------------------------------------------------------
+
+local injecting = false
+
+local function emit(fn)
+    injecting = true
+    local ok, err = pcall(fn)
+    hs.timer.doAfter(0.03, function() injecting = false end)
+    if not ok then
+        hs.alert.show("compose error: " .. tostring(err))
+    end
+end
+
+------------------------------------------------------------
 -- MAIN EVENTTAP (4 → next key)
 ------------------------------------------------------------
 
 local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
+    if injecting then return false end
+
     local keyCode = e:getKeyCode()
     local flags = e:getFlags()
     local char = e:getCharacters(true)
