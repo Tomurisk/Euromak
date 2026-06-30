@@ -324,6 +324,21 @@ wakeWatcher:start()
 -- F19 → Cmd+W
 ------------------------------------------------------------
 
-hs.hotkey.bind({}, "F19", function()
-    hs.eventtap.keyStroke({"cmd"}, "w")
+local lastF19Press = 0
+local cooldown = 0.3 -- 300 ms
+
+local f19 = hs.hotkey.new({}, "F19", function()
+    local now = hs.timer.secondsSinceEpoch()
+
+    if (now - lastF19Press) < cooldown then
+        return
+    end
+
+    lastF19Press = now
+
+    -- send raw cmd+w
+    hs.eventtap.event.newKeyEvent({"cmd"}, "w", true):post()
+    hs.eventtap.event.newKeyEvent({"cmd"}, "w", false):post()
 end)
+
+f19:enable()
