@@ -192,41 +192,10 @@ local function isFrontAppPassthrough()
 end
 
 ------------------------------------------------------------
--- SYNTHETIC OUTPUT GUARD
---
--- Wrap every synthetic keystroke WE generate (a diacritic, a
--- literal "4" from a double-tap, or a replayed unmatched key)
--- in emit(). While injecting is true, the eventtap below just
--- lets whatever it sees pass through instead of processing it.
---
--- Without this, a real new "4" press can land in the brief
--- gap before our own synthetic output has fully gone through.
--- When that happens, waitingForSecondKey is already true again
--- by the time our own output loops back through this very
--- eventtap, and it gets misread as "the second key" of a new
--- compose sequence — that's what was turning "šūdas" into
--- "šuūdas". pcall ensures injecting always gets released even
--- if fn() errors, so a bug here can't permanently wedge input.
-------------------------------------------------------------
-
-local injecting = false
-
-local function emit(fn)
-    injecting = true
-    local ok, err = pcall(fn)
-    hs.timer.doAfter(0.03, function() injecting = false end)
-    if not ok then
-        hs.alert.show("compose error: " .. tostring(err))
-    end
-end
-
-------------------------------------------------------------
 -- MAIN EVENTTAP (4 → next key)
 ------------------------------------------------------------
 
 local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
-    if injecting then return false end
-
     local keyCode = e:getKeyCode()
     local flags = e:getFlags()
     local char = e:getCharacters(true)
@@ -251,9 +220,7 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 
         if now - last4Time <= double4Window then
             reset4()
-            emit(function()
-                hs.eventtap.keyStrokes("4")
-            end)
+            hs.eventtap.keyStrokes("4")
             return true
         end
 
@@ -295,21 +262,17 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
         end
 
         if out then
-            emit(function()
-                hs.eventtap.keyStrokes(out)
-                if flags.shift then
-                    hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
-                end
-            end)
+            hs.eventtap.keyStrokes(out)
+            if flags.shift then
+                hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
+            end
         else
-            emit(function()
-                local mods = {}
-                if flags.shift then table.insert(mods, "shift") end
-                if flags.alt   then table.insert(mods, "alt")   end
-                if flags.cmd   then table.insert(mods, "cmd")   end
-                if flags.ctrl  then table.insert(mods, "ctrl")  end
-                hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
-            end)
+            local mods = {}
+            if flags.shift then table.insert(mods, "shift") end
+            if flags.alt   then table.insert(mods, "alt")   end
+            if flags.cmd   then table.insert(mods, "cmd")   end
+            if flags.ctrl  then table.insert(mods, "ctrl")  end
+            hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
         end
         return true
     end
