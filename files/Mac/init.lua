@@ -251,7 +251,9 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
 
         if now - last4Time <= double4Window then
             reset4()
-            hs.eventtap.keyStrokes("4")
+            emit(function()
+                hs.eventtap.keyStrokes("4")
+            end)
             return true
         end
 
@@ -293,17 +295,21 @@ local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
         end
 
         if out then
-            hs.eventtap.keyStrokes(out)
-            if flags.shift then
-                hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
-            end
+            emit(function()
+                hs.eventtap.keyStrokes(out)
+                if flags.shift then
+                    hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
+                end
+            end)
         else
-            local mods = {}
-            if flags.shift then table.insert(mods, "shift") end
-            if flags.alt   then table.insert(mods, "alt")   end
-            if flags.cmd   then table.insert(mods, "cmd")   end
-            if flags.ctrl  then table.insert(mods, "ctrl")  end
-            hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
+            emit(function()
+                local mods = {}
+                if flags.shift then table.insert(mods, "shift") end
+                if flags.alt   then table.insert(mods, "alt")   end
+                if flags.cmd   then table.insert(mods, "cmd")   end
+                if flags.ctrl  then table.insert(mods, "ctrl")  end
+                hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
+            end)
         end
         return true
     end
