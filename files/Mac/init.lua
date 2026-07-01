@@ -195,90 +195,101 @@ end
 -- MAIN EVENTTAP (4 → next key)
 ------------------------------------------------------------
 
-local tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(e)
-    local keyCode = e:getKeyCode()
-    local flags = e:getFlags()
-    local char = e:getCharacters(true)
-    local now = hs.timer.secondsSinceEpoch()
+local tap = hs.eventtap.new(
+    {hs.eventtap.event.types.keyDown},
+    function(e)
+        local keyCode = e:getKeyCode()
+        local flags = e:getFlags()
+        local char = e:getCharacters(true)
+        local now = hs.timer.secondsSinceEpoch()
 
-    if not char or #char ~= 1 then char = "" end
+        if not char or #char ~= 1 then char = "" end
 
-    -- Pass everything through untouched for VM/VNC apps
-    if isFrontAppPassthrough() then
-        if waitingForSecondKey then reset4() end
-        return false
-    end
-
-    --------------------------------------------------------
-    -- Step 1: Handle "4" invoker
-    --------------------------------------------------------
-    if keyCode == FOUR_KEYCODE then
-        if flags.shift then
-            -- Pass Shift+4 ($) through untouched — no re-posting, no loop
+        -- Pass everything through untouched for VM/VNC apps
+        if isFrontAppPassthrough() then
+            if waitingForSecondKey then reset4() end
             return false
         end
 
-        if now - last4Time <= double4Window then
-            reset4()
-            hs.eventtap.keyStrokes("4")
+        --------------------------------------------------------
+        -- Step 1: Handle "4" invoker
+        --------------------------------------------------------
+        if keyCode == FOUR_KEYCODE then
+            local isRepeat = e:getProperty(hs.eventtap.event.properties.keyboardEventAutorepeat) == 1
+
+            if isRepeat then
+                -- HOLDING 4 → normal autorepeat
+                reset4()
+                return false
+            end
+
+            if flags.shift then
+                -- Pass Shift+4 ($) through untouched
+                return false
+            end
+
+            if now - last4Time <= double4Window then
+                reset4()
+                hs.eventtap.keyStrokes("4")
+                return true
+            end
+
+            last4Time = now
+            waitingForSecondKey = true
+
+            if pending4Timer then pending4Timer:stop() end
+
+            pending4Timer = hs.timer.doAfter(2.0, function()
+                if waitingForSecondKey then
+                    reset4()   -- timeout: cancel silently
+                end
+            end)
+
             return true
         end
 
-        last4Time = now
-        waitingForSecondKey = true
+        --------------------------------------------------------
+        -- Step 2: Handle second key after 4
+        --------------------------------------------------------
+        if waitingForSecondKey then
+            local wasShifted = flags.shift or isCapsOn()
+            reset4()
 
-        if pending4Timer then pending4Timer:stop() end
+            local layout = currentLayout()
+            local out = nil
 
-        pending4Timer = hs.timer.doAfter(2.0, function()
-            if waitingForSecondKey then
-                reset4()   -- timeout: cancel silently, no output
-            end
-        end)
-
-        return true
-    end
-
-    --------------------------------------------------------
-    -- Step 2: Handle second key after 4
-    --------------------------------------------------------
-    if waitingForSecondKey then
-        local wasShifted = flags.shift or isCapsOn()
-        reset4()
-
-        local layout = currentLayout()
-        local out = nil
-
-        if layout == "Ukrainian" then
-            local shifted = flags.shift or isCapsOn()
-            local key = shifted and (tostring(keyCode) .. "S") or keyCode
-            out = CYRKeycodeMap[key]
-        else
-            local lookupKey = wasShifted and char:upper() or char
-            if ro then
-                out = ROMap[lookupKey]
+            if layout == "Ukrainian" then
+                local shifted = flags.shift or isCapsOn()
+                local key = shifted and (tostring(keyCode) .. "S") or keyCode
+                out = CYRKeycodeMap[key]
             else
-                out = LTMap[lookupKey]
+                local lookupKey = wasShifted and char:upper() or char
+                if ro then
+                    out = ROMap[lookupKey]
+                else
+                    out = LTMap[lookupKey]
+                end
             end
+
+            if out then
+                hs.eventtap.keyStrokes(out)
+                if flags.shift then
+                    hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
+                end
+            else
+                local mods = {}
+                if flags.shift then table.insert(mods, "shift") end
+                if flags.alt   then table.insert(mods, "alt")   end
+                if flags.cmd   then table.insert(mods, "cmd")   end
+                if flags.ctrl  then table.insert(mods, "ctrl")  end
+                hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
+            end
+            return true
         end
 
-        if out then
-            hs.eventtap.keyStrokes(out)
-            if flags.shift then
-                hs.eventtap.event.newKeyEvent(hs.keycodes.map["shift"], true):post()
-            end
-        else
-            local mods = {}
-            if flags.shift then table.insert(mods, "shift") end
-            if flags.alt   then table.insert(mods, "alt")   end
-            if flags.cmd   then table.insert(mods, "cmd")   end
-            if flags.ctrl  then table.insert(mods, "ctrl")  end
-            hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
-        end
-        return true
+        return false
     end
-
-    return false
-end)
+)
 
 tap:start()
 
