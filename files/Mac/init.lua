@@ -84,6 +84,16 @@ function isCapsOn()
     return hs.hid.capslock.get()
 end
 
+-- macOS represents non-printable keys (F1–F35, arrows, Home/End, etc.)
+-- as characters in the Unicode Private Use Area (U+F700–U+F8FF).
+-- We never want to "type" these as text.
+local function isFunctionKeyChar(str)
+    if not str or str == "" then return false end
+    local ok, cp = pcall(utf8.codepoint, str, 1)
+    if not ok or not cp then return false end
+    return cp >= 0xF700 and cp <= 0xF8FF
+end
+
 ------------------------------------------------------------
 -- LT / RO MODE TOGGLE (Option + Shift)
 ------------------------------------------------------------
@@ -279,7 +289,7 @@ local tap = hs.eventtap.new(
             else
                 local nativeChar = e:getCharacters(false)
 
-                if nativeChar and nativeChar ~= "" then
+                if nativeChar and nativeChar ~= "" and not isFunctionKeyChar(nativeChar) then
                     hs.eventtap.keyStrokes(nativeChar)
                 else
                     local mods = {}
@@ -287,7 +297,9 @@ local tap = hs.eventtap.new(
                     if flags.alt   then table.insert(mods, "alt")   end
                     if flags.cmd   then table.insert(mods, "cmd")   end
                     if flags.ctrl  then table.insert(mods, "ctrl")  end
+                    if flags.fn    then table.insert(mods, "fn")    end
                     hs.eventtap.event.newKeyEvent(mods, keyCode, true):post()
+                    hs.eventtap.event.newKeyEvent(mods, keyCode, false):post()
                 end
             end
             return true
