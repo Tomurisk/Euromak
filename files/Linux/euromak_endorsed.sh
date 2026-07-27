@@ -150,7 +150,7 @@ EOF
 
 echo "=== Writing ~/.xbindkeysrc ==="
 tee "$HOME/.xbindkeysrc" >/dev/null << 'EOF'
-"sleep 0.2; xdotool key ctrl+w"
+"/bin/sh -c 'LOCK="/tmp/dpi_lock"; [ -f "$LOCK" ] && exit 0; touch "$LOCK"; sleep 0.2; xdotool key ctrl+w; sleep 0.2; rm -f "$LOCK"'"
     c:197
 
 "~/.local/bin/toggle-cyr.sh"
